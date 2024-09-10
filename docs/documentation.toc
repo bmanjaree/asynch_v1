@@ -1,0 +1,145 @@
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}
+\contentsline {section}{\numberline {2}Installation}{5}{section.2}
+\contentsline {subsection}{\numberline {2.1}Requirements}{5}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}C Compiler}{5}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.2}GNU Make}{5}{subsubsection.2.1.2}
+\contentsline {subsubsection}{\numberline {2.1.3}MPI Implementation}{6}{subsubsection.2.1.3}
+\contentsline {subsubsection}{\numberline {2.1.4}libpq Libraries}{6}{subsubsection.2.1.4}
+\contentsline {subsection}{\numberline {2.2}Optional Software}{6}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Git}{7}{subsubsection.2.2.1}
+\contentsline {subsubsection}{\numberline {2.2.2}dos2unix}{7}{subsubsection.2.2.2}
+\contentsline {subsubsection}{\numberline {2.2.3}NoMachine NX}{7}{subsubsection.2.2.3}
+\contentsline {subsection}{\numberline {2.3}Source Code, Compiling, and Running ASYNCH}{7}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Iowa HPC Clusters}{8}{subsection.2.4}
+\contentsline {section}{\numberline {3}Terminology and Definitions}{9}{section.3}
+\contentsline {section}{\numberline {4}Quickstart Guide and Example Simulations}{12}{section.4}
+\contentsline {section}{\numberline {5}Iowa HPC Resources}{13}{section.5}
+\contentsline {subsection}{\numberline {5.1}Input and Output}{15}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Queues}{15}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}SGE Commands}{16}{subsection.5.3}
+\contentsline {subsection}{\numberline {5.4}Submit Scripts}{16}{subsection.5.4}
+\contentsline {section}{\numberline {6}Input/Output Formats}{19}{section.6}
+\contentsline {subsection}{\numberline {6.1}Global File Structure}{19}{subsection.6.1}
+\contentsline {subsubsection}{\numberline {6.1.1}Model Type and Maxtime}{19}{subsubsection.6.1.1}
+\contentsline {subsubsection}{\numberline {6.1.2}Parameters on Filenames}{20}{subsubsection.6.1.2}
+\contentsline {subsubsection}{\numberline {6.1.3}Solver Outputs}{20}{subsubsection.6.1.3}
+\contentsline {subsubsection}{\numberline {6.1.4}Peakflow Statistics Function Name}{20}{subsubsection.6.1.4}
+\contentsline {subsubsection}{\numberline {6.1.5}Global Parameters}{20}{subsubsection.6.1.5}
+\contentsline {subsubsection}{\numberline {6.1.6}Buffer Sizes}{21}{subsubsection.6.1.6}
+\contentsline {subsubsection}{\numberline {6.1.7}Topology}{21}{subsubsection.6.1.7}
+\contentsline {subsubsection}{\numberline {6.1.8}Link Parameters}{21}{subsubsection.6.1.8}
+\contentsline {subsubsection}{\numberline {6.1.9}Initial States}{22}{subsubsection.6.1.9}
+\contentsline {subsubsection}{\numberline {6.1.10}Forcings}{22}{subsubsection.6.1.10}
+\contentsline {paragraph}{No Forcing}{22}{section*.6}
+\contentsline {paragraph}{Storm File}{22}{section*.7}
+\contentsline {paragraph}{Binary Files}{23}{section*.8}
+\contentsline {paragraph}{Forcings from Databases}{23}{section*.9}
+\contentsline {paragraph}{Uniform Forcings}{23}{section*.10}
+\contentsline {paragraph}{GZipped Binary Files}{24}{section*.11}
+\contentsline {paragraph}{Monthly Forcings}{24}{section*.12}
+\contentsline {paragraph}{Grid Cell Files}{24}{section*.13}
+\contentsline {subsubsection}{\numberline {6.1.11}Dams}{24}{subsubsection.6.1.11}
+\contentsline {subsubsection}{\numberline {6.1.12}State Forcing Feeds}{25}{subsubsection.6.1.12}
+\contentsline {subsubsection}{\numberline {6.1.13}Time Series Location}{25}{subsubsection.6.1.13}
+\contentsline {subsubsection}{\numberline {6.1.14}Peakflow Data Location}{26}{subsubsection.6.1.14}
+\contentsline {subsubsection}{\numberline {6.1.15}Link IDs to Save}{26}{subsubsection.6.1.15}
+\contentsline {subsubsection}{\numberline {6.1.16}Snapshot Information}{27}{subsubsection.6.1.16}
+\contentsline {subsubsection}{\numberline {6.1.17}Scratch Work Location}{27}{subsubsection.6.1.17}
+\contentsline {subsubsection}{\numberline {6.1.18}Error Control Parameters}{27}{subsubsection.6.1.18}
+\contentsline {subsubsection}{\numberline {6.1.19}Numerical Error Tolerances}{27}{subsubsection.6.1.19}
+\contentsline {subsection}{\numberline {6.2}Database Connection Files}{28}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}Link Connectivity Input}{29}{subsection.6.3}
+\contentsline {subsection}{\numberline {6.4}Link Parameter Input}{30}{subsection.6.4}
+\contentsline {subsection}{\numberline {6.5}Initial Values Input}{30}{subsection.6.5}
+\contentsline {subsection}{\numberline {6.6}Forcing Inputs}{32}{subsection.6.6}
+\contentsline {subsection}{\numberline {6.7}Dam Parameters Input}{36}{subsection.6.7}
+\contentsline {subsection}{\numberline {6.8}Time Series Output}{36}{subsection.6.8}
+\contentsline {subsection}{\numberline {6.9}Peakflow Output}{38}{subsection.6.9}
+\contentsline {subsection}{\numberline {6.10}Link IDs for Time Series and Peakflows}{38}{subsection.6.10}
+\contentsline {subsection}{\numberline {6.11}Snapshot Output}{39}{subsection.6.11}
+\contentsline {subsection}{\numberline {6.12}Runge-Kutta Data Input}{40}{subsection.6.12}
+\contentsline {subsection}{\numberline {6.13}Temporary Files}{40}{subsection.6.13}
+\contentsline {section}{\numberline {7}Built-In Options}{41}{section.7}
+\contentsline {subsection}{\numberline {7.1}Built-In Models}{42}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Built-In Output Time Series}{42}{subsection.7.2}
+\contentsline {subsection}{\numberline {7.3}Built-In Peakflow Functions}{42}{subsection.7.3}
+\contentsline {subsection}{\numberline {7.4}Built-In Runge-Kutta Methods}{43}{subsection.7.4}
+\contentsline {section}{\numberline {8}Model Descriptions}{43}{section.8}
+\contentsline {subsection}{\numberline {8.1}Model Definition}{44}{subsection.8.1}
+\contentsline {subsubsection}{\numberline {8.1.1}SetParamSizes}{44}{subsubsection.8.1.1}
+\contentsline {subsubsection}{\numberline {8.1.2}ConvertParams}{45}{subsubsection.8.1.2}
+\contentsline {subsubsection}{\numberline {8.1.3}InitRoutines}{46}{subsubsection.8.1.3}
+\contentsline {subsubsection}{\numberline {8.1.4}Precalculations}{46}{subsubsection.8.1.4}
+\contentsline {subsubsection}{\numberline {8.1.5}ReadInitData}{47}{subsubsection.8.1.5}
+\contentsline {subsection}{\numberline {8.2}Model Equations Definition}{48}{subsection.8.2}
+\contentsline {subsubsection}{\numberline {8.2.1}Differential Equations}{48}{subsubsection.8.2.1}
+\contentsline {subsubsection}{\numberline {8.2.2}Algebraic Equations}{49}{subsubsection.8.2.2}
+\contentsline {subsubsection}{\numberline {8.2.3}State Check}{50}{subsubsection.8.2.3}
+\contentsline {subsubsection}{\numberline {8.2.4}System Consistency}{51}{subsubsection.8.2.4}
+\contentsline {subsection}{\numberline {8.3}Example Models}{51}{subsection.8.3}
+\contentsline {subsubsection}{\numberline {8.3.1}Constant Runoff Hydrological Model}{52}{subsubsection.8.3.1}
+\contentsline {subsubsection}{\numberline {8.3.2}Top Layer Hydrological Model}{58}{subsubsection.8.3.2}
+\contentsline {subsubsection}{\numberline {8.3.3}Linear Reservoir Hydrological Model}{62}{subsubsection.8.3.3}
+\contentsline {section}{\numberline {9}Solver API}{67}{section.9}
+\contentsline {subsection}{\numberline {9.1}Interface Usage}{67}{subsection.9.1}
+\contentsline {subsection}{\numberline {9.2}User Interface Routines}{69}{subsection.9.2}
+\contentsline {subsubsection}{\numberline {9.2.1}Solver Initialization}{69}{subsubsection.9.2.1}
+\contentsline {subsubsection}{\numberline {9.2.2}Asynch\_Free}{70}{subsubsection.9.2.2}
+\contentsline {subsubsection}{\numberline {9.2.3}Asynch\_Parse\_GBL}{70}{subsubsection.9.2.3}
+\contentsline {subsubsection}{\numberline {9.2.4}Asynch\_Load\_Network}{71}{subsubsection.9.2.4}
+\contentsline {subsubsection}{\numberline {9.2.5}Asynch\_Partition\_Network}{71}{subsubsection.9.2.5}
+\contentsline {subsubsection}{\numberline {9.2.6}Asynch\_Load\_Network\_Parameters}{72}{subsubsection.9.2.6}
+\contentsline {subsubsection}{\numberline {9.2.7}Asynch\_Load\_Dams}{72}{subsubsection.9.2.7}
+\contentsline {subsubsection}{\numberline {9.2.8}Asynch\_Load\_Numerical\_Error\_Data}{72}{subsubsection.9.2.8}
+\contentsline {subsubsection}{\numberline {9.2.9}Asynch\_Initialize\_Model}{73}{subsubsection.9.2.9}
+\contentsline {subsubsection}{\numberline {9.2.10}Asynch\_Load\_Initial\_Conditions}{73}{subsubsection.9.2.10}
+\contentsline {subsubsection}{\numberline {9.2.11}Asynch\_Load\_Forcings}{73}{subsubsection.9.2.11}
+\contentsline {subsubsection}{\numberline {9.2.12}Asynch\_Load\_Save\_Lists}{74}{subsubsection.9.2.12}
+\contentsline {subsubsection}{\numberline {9.2.13}Asynch\_Finalize\_Newtork}{74}{subsubsection.9.2.13}
+\contentsline {subsubsection}{\numberline {9.2.14}Asynch\_Calculate\_Step\_Sizes}{74}{subsubsection.9.2.14}
+\contentsline {subsubsection}{\numberline {9.2.15}Asynch\_Advance}{75}{subsubsection.9.2.15}
+\contentsline {subsubsection}{\numberline {9.2.16}Asynch\_Take\_System\_Snapshot}{75}{subsubsection.9.2.16}
+\contentsline {subsubsection}{\numberline {9.2.17}Asynch\_Set\_Database\_Connection}{76}{subsubsection.9.2.17}
+\contentsline {subsubsection}{\numberline {9.2.18}Asynch\_Get\_Total\_Simulation\_Time}{77}{subsubsection.9.2.18}
+\contentsline {subsubsection}{\numberline {9.2.19}Asynch\_Set\_Total\_Simulation\_Time}{78}{subsubsection.9.2.19}
+\contentsline {subsubsection}{\numberline {9.2.20}Asynch\_Get\_Last\_Rainfall\_Timestamp}{78}{subsubsection.9.2.20}
+\contentsline {subsubsection}{\numberline {9.2.21}Asynch\_Set\_Last\_Rainfall\_Timestamp}{79}{subsubsection.9.2.21}
+\contentsline {subsubsection}{\numberline {9.2.22}Asynch\_Get\_First\_Rainfall\_Timestamp}{80}{subsubsection.9.2.22}
+\contentsline {subsubsection}{\numberline {9.2.23}Asynch\_Set\_First\_Rainfall\_Timestamp}{80}{subsubsection.9.2.23}
+\contentsline {subsubsection}{\numberline {9.2.24}Asynch\_Set\_RainDB\_Starttime}{81}{subsubsection.9.2.24}
+\contentsline {subsubsection}{\numberline {9.2.25}Asynch\_Set\_Init\_File}{82}{subsubsection.9.2.25}
+\contentsline {subsubsection}{\numberline {9.2.26}Asynch\_Prepare\_Output}{82}{subsubsection.9.2.26}
+\contentsline {subsubsection}{\numberline {9.2.27}Asynch\_Prepare\_Peakflow\_Output}{83}{subsubsection.9.2.27}
+\contentsline {subsubsection}{\numberline {9.2.28}Asynch\_Prepare\_Temp\_Files}{83}{subsubsection.9.2.28}
+\contentsline {subsubsection}{\numberline {9.2.29}Asynch\_Write\_Current\_Step}{83}{subsubsection.9.2.29}
+\contentsline {subsubsection}{\numberline {9.2.30}Asynch\_Create\_Output}{84}{subsubsection.9.2.30}
+\contentsline {subsubsection}{\numberline {9.2.31}Asynch\_Create\_Peakflows\_Output}{85}{subsubsection.9.2.31}
+\contentsline {subsubsection}{\numberline {9.2.32}Asynch\_Get\_Number\_Links}{85}{subsubsection.9.2.32}
+\contentsline {subsubsection}{\numberline {9.2.33}Asynch\_Get\_Local\_Number\_Links}{86}{subsubsection.9.2.33}
+\contentsline {subsubsection}{\numberline {9.2.34}Asynch\_Set\_Temp\_Files}{86}{subsubsection.9.2.34}
+\contentsline {subsubsection}{\numberline {9.2.35}Asynch\_Reset\_Temp\_Files}{87}{subsubsection.9.2.35}
+\contentsline {subsubsection}{\numberline {9.2.36}Asynch\_Check\_Output}{88}{subsubsection.9.2.36}
+\contentsline {subsubsection}{\numberline {9.2.37}Asynch\_Check\_Peakflow\_Output}{89}{subsubsection.9.2.37}
+\contentsline {subsubsection}{\numberline {9.2.38}Asynch\_Delete\_Temporary\_Files}{89}{subsubsection.9.2.38}
+\contentsline {subsubsection}{\numberline {9.2.39}Asynch\_Activate\_Forcing}{90}{subsubsection.9.2.39}
+\contentsline {subsubsection}{\numberline {9.2.40}Asynch\_Deactivate\_Forcing}{91}{subsubsection.9.2.40}
+\contentsline {subsubsection}{\numberline {9.2.41}Asynch\_Set\_Forcing\_State}{91}{subsubsection.9.2.41}
+\contentsline {subsubsection}{\numberline {9.2.42}Asynch\_Reset\_Peakflow\_Data}{92}{subsubsection.9.2.42}
+\contentsline {subsubsection}{\numberline {9.2.43}Asynch\_Set\_System\_State}{93}{subsubsection.9.2.43}
+\contentsline {subsubsection}{\numberline {9.2.44}Asynch\_Set\_Peakflow\_Output\_Name}{93}{subsubsection.9.2.44}
+\contentsline {subsubsection}{\numberline {9.2.45}Asynch\_Get\_Peakflow\_Output\_Name}{94}{subsubsection.9.2.45}
+\contentsline {subsubsection}{\numberline {9.2.46}Asynch\_Set\_Snapshot\_Output\_Name}{95}{subsubsection.9.2.46}
+\contentsline {subsubsection}{\numberline {9.2.47}Asynch\_Get\_Snapshot\_Output\_Name}{95}{subsubsection.9.2.47}
+\contentsline {subsubsection}{\numberline {9.2.48}Asynch\_Get\_Size\_Global\_Parameters}{96}{subsubsection.9.2.48}
+\contentsline {subsubsection}{\numberline {9.2.49}Asynch\_Get\_Global\_Parameters}{97}{subsubsection.9.2.49}
+\contentsline {subsubsection}{\numberline {9.2.50}Asynch\_Set\_Global\_Parameters}{97}{subsubsection.9.2.50}
+\contentsline {subsection}{\numberline {9.3}Custom Outputs}{98}{subsection.9.3}
+\contentsline {subsubsection}{\numberline {9.3.1}Asynch\_Set\_Output}{98}{subsubsection.9.3.1}
+\contentsline {subsubsection}{\numberline {9.3.2}Asynch\_Set\_Peakflow\_Output}{101}{subsubsection.9.3.2}
+\contentsline {subsection}{\numberline {9.4}Custom Models}{103}{subsection.9.4}
+\contentsline {subsection}{\numberline {9.5}Structures and Objects}{104}{subsection.9.5}
+\contentsline {subsubsection}{\numberline {9.5.1}Vector and Matrix Structures}{105}{subsubsection.9.5.1}
+\contentsline {subsubsection}{\numberline {9.5.2}UnivVars Structure}{105}{subsubsection.9.5.2}
+\contentsline {subsubsection}{\numberline {9.5.3}Link Structure}{106}{subsubsection.9.5.3}
+\contentsline {subsection}{\numberline {9.6}API for Python}{107}{subsection.9.6}
+\contentsline {section}{\numberline {10}Known Issues}{110}{section.10}

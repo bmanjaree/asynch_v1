@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asynch", "asynch\asynch.vcxproj", "{CE61AAE4-06D8-4998-A859-B26769818B54}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asynchlib", "asynchlib\asynchlib.vcxproj", "{B7C669BC-CB73-4FD5-B095-65AA2C1D6D1B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "assim", "assim\assim.vcxproj", "{B5C9DCC4-4CA9-4ECB-B654-D6A2704719C1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asynch_py", "asynch_py\asynch_py.vcxproj", "{1FB09932-0672-46A1-9570-EE114501CBBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE61AAE4-06D8-4998-A859-B26769818B54}.Debug|x64.ActiveCfg = Debug|x64
+		{CE61AAE4-06D8-4998-A859-B26769818B54}.Debug|x64.Build.0 = Debug|x64
+		{CE61AAE4-06D8-4998-A859-B26769818B54}.Release|x64.ActiveCfg = Release|x64
+		{CE61AAE4-06D8-4998-A859-B26769818B54}.Release|x64.Build.0 = Release|x64
+		{B7C669BC-CB73-4FD5-B095-65AA2C1D6D1B}.Debug|x64.ActiveCfg = Debug|x64
+		{B7C669BC-CB73-4FD5-B095-65AA2C1D6D1B}.Debug|x64.Build.0 = Debug|x64
+		{B7C669BC-CB73-4FD5-B095-65AA2C1D6D1B}.Release|x64.ActiveCfg = Release|x64
+		{B7C669BC-CB73-4FD5-B095-65AA2C1D6D1B}.Release|x64.Build.0 = Release|x64
+		{B5C9DCC4-4CA9-4ECB-B654-D6A2704719C1}.Debug|x64.ActiveCfg = Debug|x64
+		{B5C9DCC4-4CA9-4ECB-B654-D6A2704719C1}.Debug|x64.Build.0 = Debug|x64
+		{B5C9DCC4-4CA9-4ECB-B654-D6A2704719C1}.Release|x64.ActiveCfg = Release|x64
+		{B5C9DCC4-4CA9-4ECB-B654-D6A2704719C1}.Release|x64.Build.0 = Release|x64
+		{1FB09932-0672-46A1-9570-EE114501CBBD}.Debug|x64.ActiveCfg = Debug|x64
+		{1FB09932-0672-46A1-9570-EE114501CBBD}.Debug|x64.Build.0 = Debug|x64
+		{1FB09932-0672-46A1-9570-EE114501CBBD}.Release|x64.ActiveCfg = Release|x64
+		{1FB09932-0672-46A1-9570-EE114501CBBD}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\steppers">
+      <UniqueIdentifier>{1db91180-4b39-4bee-a057-6238de1f82ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\models">
+      <UniqueIdentifier>{fbfadfbf-ee42-4ea7-a05e-7a075920e113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\solvers">
+      <UniqueIdentifier>{1177d832-9669-4829-8520-ef34245737a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\models">
+      <UniqueIdentifier>{00cce110-afb6-420b-bf99-bd60165abd6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\assim">
+      <UniqueIdentifier>{99572720-e986-4d09-9466-915c71ae1474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\assim">
+      <UniqueIdentifier>{8ffcf894-acc5-4bd8-9cf3-eccf8be42464}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(RootDir)\src\asynch_interface.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\comm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\compression.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\data_types.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\forcings.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\io.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\misc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\partition.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\processdata.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\riversys.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\sort.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(RootDir)\src\system.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\blas.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\advance.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\models\check_state.c">
+      <Filter>Source Files\models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\models\check_consistency.c">
+      <Filter>Source Files\models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\solvers\dopri5_dense.c">
+      <Filter>Source Files\solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\solvers\lagrange.c">
+      <Filter>Source Files\solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\solvers\radau.c">
+      <Filter>Source Files\solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\solvers\rk3_2_dense.c">
+      <Filter>Source Files\solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\solvers\rk4_3_dense.c">
+      <Filter>Source Files\solvers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\steppers\assim.c">
+      <Filter>Source Files\steppers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\steppers\explicit.c">
+      <Filter>Source Files\steppers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\steppers\explicit_discont.c">
+      <Filter>Source Files\steppers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\steppers\explicit_index1.c">
+      <Filter>Source Files\steppers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\steppers\explicit_index1_dam.c">
+      <Filter>Source Files\steppers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\steppers\forced.c">
+      <Filter>Source Files\steppers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\steppers\implicit.c">
+      <Filter>Source Files\steppers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\forcings_io.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\db.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\rksteppers.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\models\model.c">
+      <Filter>Source Files\models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\outputs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\config_gbl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\models\equations.c">
+      <Filter>Source Files\models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\models\definitions.c">
+      <Filter>Source Files\models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\date_manip.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\assim\linear_least_squares.c">
+      <Filter>Source Files\assim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\assim\models.c">
+      <Filter>Source Files\assim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\assim\ancillary.c">
+      <Filter>Source Files\assim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\models\output_constraints.c">
+      <Filter>Source Files\models</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(RootDir)\src\asynch_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\comm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\compression.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\data_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\forcings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\misc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\partition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\processdata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\riversys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\rkmethods.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\sort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\structs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\blas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(RootDir)\src\rainfall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\advance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\models\model.h">
+      <Filter>Header Files\models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\models\check_state.h">
+      <Filter>Header Files\models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\models\check_consistency.h">
+      <Filter>Header Files\models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\solvers\lagrange.h">
+      <Filter>Source Files\solvers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\structs_fwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\libpq_fwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\outputs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\config_gbl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\model_equ.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\model_def.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\models\equations.h">
+      <Filter>Header Files\models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\models\definitions.h">
+      <Filter>Header Files\models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\rksteppers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\date_manip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\assim\models.h">
+      <Filter>Header Files\assim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\assim\linear_least_squares.h">
+      <Filter>Header Files\assim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\assim\ancillary.h">
+      <Filter>Header Files\assim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\assim\structs.h">
+      <Filter>Header Files\assim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\models\output_constraints.h">
+      <Filter>Source Files\models</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(RootDir)\LICENSE" />
+  </ItemGroup>
+</Project>

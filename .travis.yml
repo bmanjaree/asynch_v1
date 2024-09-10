@@ -1,0 +1,20 @@
+language: c
+addons:
+  apt:
+    packages:
+     - check
+     - libopenmpi-dev
+     - openmpi-bin
+     - libpq-dev
+     - libssh2-1-dev
+     - libhdf5-serial-dev
+     - hdf5-tools
+     - gfortran
+before_script:
+  - test -n $CC && unset CC
+script:
+ - mkdir -v build
+ - cd build
+ - autoreconf -ivf ..
+ - ../configure --prefix=${HOME}
+ - make check
