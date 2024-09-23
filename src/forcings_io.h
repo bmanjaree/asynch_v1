@@ -20,6 +20,16 @@ int Create_Rain_Data_Par(
     double t_0, double increment,
     Forcing* forcing, const Lookup * const id_to_loc, unsigned int max_files, unsigned int forcing_idx);
 
+int Create_Rain_Data_Par_IBin(
+    Link *sys, unsigned int N,
+    Link **my_sys, unsigned int my_N,
+    const GlobalVars * const globals,
+    int* assignments,
+    char strfilename[],
+    unsigned int first, unsigned int last,
+    double t_0, double increment,
+    Forcing* forcing, const Lookup * const id_to_loc, unsigned int max_files, unsigned int forcing_idx);
+
 int Create_Rain_Data_GZ(
     Link *sys, unsigned int N,
     Link **my_sys,unsigned int my_N,
