@@ -76,19 +76,6 @@ double nrminf2(const double * restrict const v, const double * restrict const w,
     return max;
 }
 
-////Computes the infinity norm of the vector v.
-//double vector_norminf(VEC v, unsigned int start)
-//{
-//    unsigned int i;
-//    double norm = fabs(v_at(v, start));
-//    double val;
-//    for (i = start + 1; i < v.dim; i++)
-//    {
-//        val = fabs(v_at(v, i));
-//        norm = (norm < val) ? val : norm;
-//    }
-//    return norm;
-//}
 
 //Computes the infinity norm of the vector v.
 double nrminf(const double * restrict const v, unsigned int begin, unsigned int end)
@@ -103,47 +90,3 @@ double nrminf(const double * restrict const v, unsigned int begin, unsigned int 
 }
 
 
-////Prints the vector v to stdout.
-//void Print_Vector(VEC v)
-//{
-//    unsigned int i;
-//    for (i = 0; i < v.dim; i++)
-//        printf("%.16f ", v.storage[i]);
-//    printf("\n");
-//}
-//
-////Prints the matrix A to stdout.
-//void Print_Matrix(MAT A)
-//{
-//    unsigned int i, j;
-//    for (i = 0; i < A.m; i++)
-//    {
-//        for (j = 0; j < A.n; j++)	printf("%.16f ", A.me[i][j]);
-//        printf("; \n");
-//    }
-//}
-//
-////Prints the vector v in C format to stdout.
-//void Print_VectorC(VEC v)
-//{
-//    unsigned int i;
-//    printf("{ %.16f", v.storage[0]);
-//    for (i = 1; i < v.dim; i++)
-//        printf(", %.16f", v.storage[i]);
-//    printf(" }\n");
-//}
-//
-////Prints the matrix A in C format to stdout.
-//void Print_MatrixC(MAT A)
-//{
-//    unsigned int i, j;
-//    printf("{ ");
-//    for (i = 0; i < A.m; i++)
-//    {
-//        printf("{ %.16f", A.me[i][0]);
-//        for (j = 1; j < A.n; j++)	printf(", %.16f", A.me[i][j]);
-//        printf("},\n");
-//    }
-//    printf("}\n");
-//}
-//
