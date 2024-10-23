@@ -197,6 +197,24 @@ double NextForcingGZBinaryFiles(Link* sys, unsigned int N, Link **my_sys, unsign
     return maxtime;
 }
 
+//For flag = 8
+//Deleted####
+double NextForcingGridCell(Link* sys, unsigned int N, Link **my_sys, unsigned int my_N, int* assignments, const GlobalVars * const globals, Forcing* forcing, ConnData* db_connections, const Lookup * const id_to_loc, unsigned int forcing_idx)
+{
+    unsigned int passes = forcing->passes, iteration = forcing->iteration;
+    double maxtime;
+    if (iteration == passes - 1)
+        maxtime = globals->maxtime;
+    else
+        maxtime = min(globals->maxtime, (iteration + 1)*forcing->file_time*forcing->increment);
+    int maxfileindex = (int)min((double)forcing->first_file + (iteration + 1)*forcing->increment, (double)(forcing->last_file + 1));
+
+    Create_Rain_Data_Grid(sys, N, my_sys, my_N, globals, assignments, forcing->fileident, forcing->first_file + iteration*forcing->increment, maxfileindex, iteration*forcing->file_time*forcing->increment, forcing->file_time, forcing, id_to_loc, forcing->increment + 1, forcing_idx);
+
+    (forcing->iteration)++;
+    return maxtime;
+}
+
 
 //For flag = 3
 double NextForcingDatabase(Link* sys, unsigned int N, Link **my_sys, unsigned int my_N, int* assignments, const GlobalVars * const globals, Forcing* forcing, ConnData* db_connections, const Lookup * const id_to_loc, unsigned int forcing_idx)
