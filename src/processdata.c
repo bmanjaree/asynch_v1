@@ -2427,66 +2427,6 @@ printf("i = %i j = %i line_size = %u expected = %u shift = %i pos_offset = %i\n"
     return warning;
 }
 
-//!!!! This assumes the first value in the file is time. !!!!
-/*
-int SetTempFiles(double set_time,Link** sys,unsigned int N,FILE* tempfile,UnivVars* GlobalVars,unsigned int my_save_size,const Lookup * const id_to_loc)
-{
-    unsigned int i,j,id;
-    int current_pos,warning = 0;
-    double current_time;
-    Link* current;
-
-    if(!tempfile)
-    {
-        printf("[%i]: Error: Cannot reset temporary file. A temporary file is not open.\n",my_rank);
-        return 2;
-    }
-
-    //Restart the file
-    rewind(tempfile);
-
-    //Find set_time at each link
-    for(i=0;i<my_save_size;i++)
-    {
-        //Get linkid from file
-        fread(&id,sizeof(unsigned int),1,tempfile);
-        fseek(tempfile,sizeof(unsigned int),SEEK_CUR);	//Skip over number of stored values (I don't think it's needed here)
-        current = sys[find_link_by_idtoloc(id,id_to_loc,N)];
-        current_pos = fgetpos(tempfile,&(current->pos));
-        for(j=0;j<current->disk_iterations;j++)
-        {
-            fread(&current_time,sizeof(double),1,tempfile);
-            if( fabs(set_time - current_time) < 1e-10 )		//!!!! Is this a good bound? Maybe use a relative error. !!!!
-            {
-                fseek(tempfile,-sizeof(double),SEEK_CUR);	//Backup one double
-                break;
-            }
-
-            //fseek(tempfile,globals->num_print*sizeof(double),SEEK_CUR);	//Skip ahead to next timestep
-            fseek(tempfile,(globals->num_print-1)*sizeof(double),SEEK_CUR);	//Skip ahead to next timestep
-        }
-
-        if(j == current->disk_iterations)
-        {
-            printf("[%i]: Warning: Cannot set file position for link %u to time %f.\n",my_rank,id,set_time);
-            warning = 1;
-            continue;
-        }
-
-        //Set file position
-        fgetpos(tempfile,&(current->pos));
-        current->disk_iterations = j;
-        current->next_save = set_time;		//!!!! This forces the print times to match up with the assimilation times !!!!
-
-        //Get to next link in file
-        //fseek(tempfile,(current->expected_file_vals-j)*(1+globals->num_print)*sizeof(double),SEEK_CUR);
-        fseek(tempfile,(current->expected_file_vals-j)*globals->num_print*sizeof(double),SEEK_CUR);
-    }
-
-    return warning;
-}
-*/
-
 
 //Rewrites the previous step written at link_i with the current step. The current time and state is used.
 //!!!! This assumes we are writting into files. !!!!
