@@ -66,7 +66,7 @@ for(i=0;i<dim;i++)	ans[i] = tempresult[i];
 
 double sq(double x) { return x * x; }
 
-
+/*
 //Type 602
 //model with interflow, in this case we consider that there is also an interflow
 //from the toplayer
@@ -735,7 +735,8 @@ void TilesModel_Base(double t, const double * const y_i, unsigned int dim, const
     //Subsurface (saturated) soil
     ans[3] = q_ls - q_sLink - e_s;
 }
-
+*/
+/*
 //Type 654
 //Variable_TopLayer: This is a version of the TopLayer model 254 with the
 //difference that in this case all variables could be distributed 
@@ -821,7 +822,7 @@ void Variable_TopLayer(double t, const double * const y_i, unsigned int dim, con
 }
 
 
-
+*/
 
 //Type 225
 //This model is used for the tiling experiments. The rainfall will run through the hillslope and requires an if/then statement. The variables are river flow, ponded, top layer, subsurface layer
@@ -1791,7 +1792,7 @@ void model256(double t, const double * const y_i, unsigned int dim, const double
 }
 
 
-
+/*
 //Type 263: similar to model 256, with distributed parameters
 //Contains 3 layers on hillslope: ponded, top layer, soil. Also has 3 extra states: total precip, total ET, total runoff, base flow
 //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
@@ -1899,7 +1900,8 @@ void model263(double t, const double * const y_i, unsigned int dim, const double
     //pow using q not q_b to move at same flow velocity that state0
     ans[4] = invtau * pow(q, lambda_1) * ans[4];    // baseflow[0]
 }
-
+*/
+/*
 //Type 264: similar to model 256, with a forcing for snowmelt
 //Contains 3 layers on hillslope: ponded, top layer, soil. Also has 3 extra states: total precip, total ET, total runoff, base flow
 //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
@@ -2277,7 +2279,7 @@ void OfflineTopLayerInterflowHillslope_Reservoirs(double t, const double * const
     ans[2] = 0.0;
     ans[3] = 0.0;
 }
-
+*/
 //Type 400
 //Tetis model structure for runoff generation + normal routing (NO stream order based velocity)
 //Four layers
@@ -3573,7 +3575,7 @@ void model405(double t, \
 }
 
 
-
+/*
 //Type 261
 //Contains 2 states in the channel: dischage, storage
 //Contains 3 layers on hillslope: ponded, top layer, soil
@@ -3881,7 +3883,8 @@ void TopLayerNonlinearExpSoilvel_ConstEta_Reservoirs(double t, const double * co
     ans[6] = 0.0;
     ans[7] = 0.0;
 }
-
+*/
+/*
 //Type 19
 //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
 //The numbering is:	0   1   2   3  4    5    6   7
@@ -3965,8 +3968,8 @@ int LinearHillslope_Evap_Check(const double * const y_i, const double * const pa
     else 		return 1;
 }
 
-
-
+*/
+/*
 //Type 190
 //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
 //The numbering is:	0   1   2   3  4    5    6   7
@@ -4199,7 +4202,7 @@ void LinearHillslope_MonthlyEvap_kI_extras(double t, const double * const y_i, u
     //ans[5] += k3*y_p[i].ve[2]*A_h;
     ans[5] *= v_B / L;
 }
-
+*/
 //Type 193
 //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
 //The numbering is:	0   1   2   3  4    5    6   7
@@ -4277,7 +4280,7 @@ void routing_runoff1(double t, const double * const y_i, unsigned int dim, const
 
 
 }
-
+/*
 //Type 195
 //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
 //The numbering is:	0   1   2   3  4    5    6   7
@@ -4437,8 +4440,8 @@ void LinearHillslope_MonthlyEvap_OnlyRouts_HasReservoir(double t, const double *
 	ans[3] = 0.0;
 	ans[4] = 0.0;
 }
-
-
+*/
+/*
 //Type 20
 //Order of parameters: A_i,L_i,A_h,invtau,c_1,c_2
 //The numbering is:	0   1   2    3     4   5
@@ -4629,8 +4632,8 @@ void LinearHillslope_Evap_RC(double t, const double * const y_i, unsigned int di
     ans[1] = forcing_values[0] * c_1*RC - q_pl - e_p;
     ans[2] = forcing_values[0] * c_1*(1.0 - RC) - q_al - e_a;
 }
-
-
+*/
+/*
 // Type 21 ************************************************
 
 //Type 21
@@ -5153,7 +5156,8 @@ int dam_check3(
     return 3;
 }
 
-
+*/
+/*
 // Type 40 ************************************************
 
 //Type 40
@@ -5263,7 +5267,8 @@ void dam_q_qvs(const double * const y_i, unsigned int num_dof, const double * co
     }
 }
 
-
+*/
+/*
 // Rodica's Models **************************
 
 //Type 0
@@ -5628,107 +5633,8 @@ void river_rainfall_adjusted(
 }
 
 
-//Type 315
-//Function for simple river system with data assimilation.
-//Calculates the flow using simple parameters, using only the flow q.
-//Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
-//The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
-//Order of global_params: v_r,lambda_1,lambda_2,v_h,A_r,RC
-//The numbering is:        0      1        2     3   4   5
-//This uses the units and functions from September 18, 2011 document
-//y_i[0] = q, y_i[1] = s, followed by N entries for the variational equation
-void assim_river_rainfall_adjusted(double t, const double * const y_i, unsigned int dim, const double * const y_p, unsigned short num_parents, unsigned int max_dim, const double * const global_params, const double * const params, const double * const forcing_values, const QVSData * const qvs, int state, void* user, double *ans)
-{
-    printf("Error: assim models do not exist...\n");
-    MPI_Abort(MPI_COMM_WORLD, 1);
-    /*
-    unsigned int i,j;
-    unsigned int dim = ans.dim;
-    unsigned int offset = 2;		//!!!! This needs to be num_dense, but without variational eqs !!!!
-    unsigned int parent_offset;
-    unsigned int problem_dim = 2;
-    unsigned int all_states = (dim-offset)/problem_dim;
-    unsigned int loc = iparams.ve[0];
-    double inflow = 0.0;
 
-    double q = y_i[0];
-    double s_p = y_i[1];
-
-    double L = params[0];
-    double invtau = params[12];
-    double c_1 = params[14];
-    double c_3 = params[16];
-    double c_4 = params[17];
-    double lambda_1 = global_params[1];
-
-    double q_to_lambda_1 = pow(q,lambda_1);
-    //double q_to_lambda_1_m1 = (q > 1e-12) ? q_to_lambda_1 / q : 1e-12;
-    double q_to_lambda_1_m1 = (q > 1e-12) ? q_to_lambda_1 / q : pow(1e-12,lambda_1 - 1.0);
-    double deriv_qpl = 1.0;
-
-    double q_pl = s_p;
-
-    //Flux equation (y_i[0])
-    ans[0] = -q + c_1 * q_pl;
-    for(i=0;i<num_parents;i++)
-    inflow += y_p[i * dim];
-    ans[0] = invtau * q_to_lambda_1 * (inflow + ans[0]);
-
-    //Ponded water equation (y_i[1])
-    ans[1] = c_3 * forcing_values[0] - c_4 * q_pl;
-    //ans[1] = c_3 * ( max(forcing_values[0] + 20.0*sin(t/5.0),0.0)) - c_4 * q_pl;
-
-    //!!!! Pull if statements out of loops (should just need two cases total) !!!!
-    //!!!! A lot of terms get repeated !!!!
-
-    //Eqs for variational equations
-    for(i=offset;i<dim;i++)	ans[i] = 0.0;
-
-    //s variable from this link
-    ans[offset] = -c_4*deriv_qpl*y_i[offset];
-
-    //q variables from this link
-    //	if(lambda_1 > 1e-12 && (inflow) > 1e-12)
-    ans[offset + 1] = (lambda_1 * invtau * q_to_lambda_1_m1 * (inflow + c_1*s_p) - (lambda_1 + 1) * invtau * q_to_lambda_1) * y_i[offset + 1];
-    //	else
-    //		ans[offset + 1] = -(lambda_1 + 1.0) * invtau * q_to_lambda_1 * y_i[offset + 1];
-
-    //	if(lambda_1 > 1e-12 && (inflow) > 1e-12)
-    ans[offset + 2] = (lambda_1 * invtau * q_to_lambda_1_m1 * (inflow + c_1*s_p) - (lambda_1 + 1) * invtau * q_to_lambda_1) * y_i[offset + 2] + invtau*c_1*q_to_lambda_1*deriv_qpl * y_i[offset];
-    //	else
-    //		ans[offset + 2] = -(lambda_1 + 1.0) * invtau * q_to_lambda_1 * y_i[offset + 2] + invtau*c_1*deriv_qpl*y_i[offset];
-
-    //Adjust offset
-    offset += 3;
-
-    //Variables from parents
-    for(i=0;i<num_parents;i++)
-    {
-    parent_offset = 1 + problem_dim;
-
-    for(j=0;j<numupstream[i];j++)
-    {
-    ans[offset] = invtau * q_to_lambda_1 * y_p[i].ve[parent_offset];
-    //			if(lambda_1 > 1e-12 && (inflow) > 1e-12)
-    ans[offset] += (lambda_1 * invtau * q_to_lambda_1_m1 * (inflow + c_1*s_p) - (lambda_1 + 1) * invtau * q_to_lambda_1) * y_i[offset];
-    //			else
-    //				ans[offset] += -(lambda_1 + 1.0) * invtau * q_to_lambda_1 * y_i[offset];
-
-    ans[offset + 1] = invtau * q_to_lambda_1 * y_p[i].ve[parent_offset + 1];
-    //			if(lambda_1 > 1e-12 && (inflow) > 1e-12)
-    ans[offset + 1] += (lambda_1 * invtau * q_to_lambda_1_m1 * (inflow + c_1*s_p) - (lambda_1 + 1) * invtau * q_to_lambda_1) * y_i[offset + 1];
-    //			else
-    //				ans[offset + 1] += -(lambda_1 + 1.0) * invtau * q_to_lambda_1 * y_i[offset + 1];
-
-    offset += 2;
-    parent_offset += 2;
-    }
-    }
-    */
-}
-
-
-
+/*
 //Type 30
 //Function for river system with soil properties and rainfall******************
 //This uses Luciana's model
@@ -5738,129 +5644,6 @@ void assim_river_rainfall_adjusted(double t, const double * const y_i, unsigned 
 //The numbering is:     0   1   2    3   4       5         6    7   8    9 10 11  12  13  14  15  16  17  18  19  20
 //Order of global_params: v_0,lambda_1,lambda_2,Q_r,A_r,K_T,C_r,e_pot
 //The numbering is:        0      1        2     3   4   5   6   7
-/*
-void lcuencas_soilrain(double t,double *y_i,double *y_p,unsigned short num_parents, unsigned int max_dim,double *global_params,double *forcing_values,QVSData *qvs,double *params,int state,void* user,double *ans)
-{
-unsigned int i;
-
-//States
-double q = y_i[0];		//[m^3/s]
-double s_p = y_i[1];	//[mm]
-double h_w = y_i[2];	//[m]
-double theta = y_i[3];	//[%]
-
-//Global params
-//double v_0 = global_params[0];
-double lambda_1 = global_params[1];
-//double lambda_2 = global_params[2];
-//double A_r = global_params[4];
-double K_T = global_params[5];
-double e_pot = global_params[7];
-
-//Local params
-double A_h = params[1];
-double H_b = params[3];
-double H_h = params[4];
-double maxinf = params[5];
-//double K_SAT = params[6];
-double K_SAT = (H_h > 1e-12) ? params[6] : 0.0;
-double b = params[9];
-double c = params[10];
-double d = params[11];
-double K_Q = params[12];
-double V_T = params[13];
-double c_1 = params[14];
-double c_2 = params[15];
-double c_3 = params[16];
-double c_4 = params[17];
-double c_5 = params[18];
-double c_6 = params[19];
-double c_7 = params[20];
-
-//Other
-//double H_T = H_b + H_h;
-double h_rel = h_w - H_b * 1e-3;
-//double H_relmax = H_T - H_b;
-double H_relmax = (H_h > 1e-12) ? H_h : 1e-6;
-double hoverH = h_rel / H_relmax;
-double a_IoverA_H = b * hoverH + c * sq(hoverH) + d * sq(hoverH) * hoverH;
-if(a_IoverA_H < 0.0)	a_IoverA_H = 1e-6;
-if(a_IoverA_H > 0.9999)	a_IoverA_H = 0.9999;
-double a_PoverA_H = 1.0 - a_IoverA_H;
-double v_H = c_1 * pow(s_p * 1e-3,2.0/3.0);
-if(v_H > 350.0)	v_H = 350.0;
-double v_ssat = V_T * a_IoverA_H;
-double v_sunsat = V_T - v_ssat;
-double d_soil = (1.0 - theta) * H_b;
-double RC = (s_p <= 0.0) ? 0.0 : s_p*(s_p + 2*d_soil) / sq(s_p + d_soil);
-double deriv_a_I = c_7 * (b + 2*c*hoverH + 3*d*sq(hoverH));
-if(deriv_a_I <= (1e-5*1e6)) deriv_a_I = (100.0*1e6);		//Should use this
-//if(deriv_a_I <= (1e-0)) deriv_a_I = 1e-0;
-double K_UNSAT = K_SAT * exp(5.0 * (theta - 1.0));
-double infrate = (s_p > maxinf) ? infrate = maxinf : s_p * K_T;
-//double infrate = s_p*K_T;
-//if(infrate > maxinf)	infrate = maxinf;
-
-
-//Evaporation
-//double C_p = (e_pot > 0.0) ? s_p / e_pot : 0.0;
-double D_unsat = 1e-3 * v_sunsat * theta / A_h;
-double D_sat = 1e-3 * v_ssat / A_h;
-
-double C_p,C_unsat,C_sat,C_T;
-if(e_pot > 0.0)
-{
-C_p = s_p / e_pot;
-C_unsat = D_unsat / e_pot;
-C_sat = D_sat / e_pot;
-C_T = C_p + C_unsat + C_sat;
-}
-else
-{
-C_p = 0.0;
-C_unsat = 0.0;
-C_sat = 0.0;
-C_T = 0.0;
-}
-
-
-//double C_unsat = D_unsat / H_b * a_PoverA_H;
-//double C_sat = D_sat/H_b * a_IoverA_H;
-//double C_s = 0.0;
-//C_T = C_s + C_unsat + C_sat;
-
-double Corr_evap = (C_T > 1.0) ? 1.0/C_T : 1.0;
-double e_p = Corr_evap * C_p * e_pot;
-double e_sat = Corr_evap * C_sat * e_pot;
-double e_unsat = Corr_evap * C_unsat * e_pot;
-
-
-//Fluxes
-double q_pl = c_2 * (a_PoverA_H * RC + a_IoverA_H) * v_H * s_p;
-double q_sl = c_3 * v_ssat * a_IoverA_H;
-double snow_M = 0.8 * 0.0;	//Assume no snow for now
-double q_pu = a_PoverA_H * infrate * (1.0 - RC);
-double q_us = 1e3 * K_UNSAT * theta * a_PoverA_H;
-
-//!!!! This might be cleaner if H_b is converted into m !!!!
-
-//Channel transport
-ans[0] = -q;
-for(i=0;i<num_parents;i++)	ans[0] += y_p[i * dim];
-ans[0] = K_Q * pow(q,lambda_1) * (ans[0] + c_4 * (q_pl + q_sl + snow_M));
-
-//Land surface storage
-ans[1] = (1.0/60.0) * (forcing_values[0] - q_pl - q_pu - e_p);
-
-//Water table
-ans[2] = (H_b < 1e-6) ? 0.0 : c_5 / deriv_a_I * (q_us - q_sl - e_sat);
-
-//Soil volumetric water content
-//ans[3] = (v_sunsat < 1e-6) ? 0.0 : c_6 / v_sunsat * (q_pu - q_us - e_unsat + theta*(q_us - q_sl - e_sat));
-//ans[3] = (v_sunsat < 1e-12) ? -100.0 : c_6 / v_sunsat * (q_pu - q_us - e_unsat + theta*(q_us - q_sl - e_sat));
-ans[3] = c_6 / v_sunsat * (q_pu - q_us - e_unsat + theta*(q_us - q_sl - e_sat));
-}
-*/
 
 void lcuencas_soilrain(double t, const double * const y_i, unsigned int dim, const double * const y_p, unsigned short num_parents, unsigned int max_dim, const double * const global_params, const double * const params, const double * const forcing_values, const QVSData * const qvs, int state, void* user, double *ans)
 {
@@ -6133,3 +5916,4 @@ void Tiling(double t, const double * const y_i, unsigned int dim, const double *
         ans[0] += y_p[i * dim];
     ans[0] = invtau * pow(q, lambda_1) * ans[0];
 }
+*/
