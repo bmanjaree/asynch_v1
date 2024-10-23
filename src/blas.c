@@ -34,27 +34,6 @@ void daxpy(double alpha, const double * restrict const x, double * restrict y, u
         y[i] += alpha * x[i];
 }
 
-//void daxpy(double alpha, VEC x, VEC y, unsigned int begin)
-//{
-//    assert(begin < y.dim);
-//    assert(x.dim == y.dim);
-//    daxpy_impl(alpha, x.storage, y.storage, begin, x.dim);
-//}
-
-//void daxpy_u(double alpha, VEC x, VEC y, unsigned int begin, unsigned int end)
-//{
-//    assert(begin < y.dim);
-//    assert(end <= y.dim);
-//    daxpy_impl(alpha, x.storage, y.storage, begin, end);
-//}
-
-//void sv_mlt(double val, VEC v, unsigned int begin)
-//{
-//    assert(begin < v.dim);
-//    unsigned int dim = v.dim;
-//    for (unsigned int i = begin; i < dim; i++)
-//        v.storage[i] *= val;
-//}
 
 // scales a vector by a constant
 void dscal(double val, double * restrict v, unsigned int begin, unsigned int end)
