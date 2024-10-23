@@ -401,7 +401,7 @@ case 20:	num_global_params = 9;
         globals->min_error_tolerances = 3;
         break;
      */ 
-    case 602:	num_global_params = 1;
+    /*case 602:	num_global_params = 1;
         globals->uses_dam = 0;
         globals->num_params = 16;
         globals->dam_params_size = 0;
@@ -520,6 +520,7 @@ case 20:	num_global_params = 9;
         globals->num_forcings = 3;
         globals->min_error_tolerances = 7;
         break;
+     */
     case 250:	num_global_params = 9;
         globals->uses_dam = 0;
         globals->num_params = 9;
@@ -605,7 +606,7 @@ case 20:	num_global_params = 9;
         globals->min_error_tolerances = 8;
         break;
         //--------------------------------------------------------------------------------------------
-    case 257:   num_global_params = 31;
+    /*case 257:   num_global_params = 31;
         globals->uses_dam = 0;
         globals->num_params = 9;
         globals->dam_params_size = 0;
@@ -628,6 +629,7 @@ case 20:	num_global_params = 9;
         globals->num_forcings = 4;          // runoff, infilt, evapot, reserv
         globals->min_error_tolerances = 7;  //
         break;
+        */
         //--------------------------------------------------------------------------------------------
     case 259:	num_global_params = 10;
         globals->uses_dam = 0;
@@ -653,7 +655,7 @@ case 20:	num_global_params = 9;
         globals->min_error_tolerances = 4;
         break;
         //--------------------------------------------------------------------------------------------
-    case 261:	num_global_params = 6;
+    /*case 261:	num_global_params = 6;
         globals->uses_dam = 1;
         globals->num_params = 13;
         globals->dam_params_size = 0;
@@ -675,7 +677,7 @@ case 20:	num_global_params = 9;
         globals->convertarea_flag = 0;
         globals->num_forcings = 3;
         globals->min_error_tolerances = 8;
-        break;
+        break;*/
         //--------------------------------------------------------------------------------------------
   case 263: //256 with distributed params
 		num_global_params = 13;
@@ -1511,7 +1513,7 @@ void InitRoutines(
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_4States;
         //link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-    }*/
+    }
     
 
     else if (model_uid == 602)
@@ -1659,7 +1661,7 @@ void InitRoutines(
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_4States;
         //link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-    }
+    }*/
     else if (model_uid == 249)
     {
         link->dim = 6;
@@ -1824,7 +1826,7 @@ void InitRoutines(
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
     }
 	    
-    else if (model_uid == 257)
+    /*else if (model_uid == 257)
     {
         link->dim = 8;
         link->no_ini_start = 4;
@@ -1952,7 +1954,7 @@ void InitRoutines(
         link->check_state = &dam_check_qvs;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_qs;
     
-	} else if (model_uid == 263) {
+	}*/else if (model_uid == 263) {
 		link->dim = 8;
 		link->no_ini_start = 4;
 		link->diff_start = 0;
@@ -2136,63 +2138,6 @@ void InitRoutines(
 			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 		}
 
-	//else if (model_uid == 300)
-	//{
-	//    link->dim = 2;
-	//    link->no_ini_start = 1;
-	//    link->diff_start = 0;
-
-	//    link->num_dense = 1;
-	//    link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
-	//    link->dense_indices[0] = 0;
-
-	//    link->differential = &assim_simple_river;
-	//    link->algebraic = NULL;
-	//    link->check_state = NULL;
-	//    link->check_consistency = &CheckConsistency_Nonzero_1States;
-	//}
-	//else if (model_uid == 301)	//!!!! For data assimilation. Needs updating. !!!!
-	//{
-	//    printf("!!!! InitRoutines: model 301 needs to be updated. !!!!\n");
-
-	//    link->dim = 3;
-	//    link->no_ini_start = 2;
-	//    link->diff_start = 0;
-
-	//    link->num_dense = 1;
-	//    link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
-	//    link->dense_indices[0] = 0;
-
-	//    link->differential = &assim_river_rainfall;
-	//    link->algebraic = NULL;
-	//    link->check_state = NULL;
-	//    link->check_consistency = &CheckConsistency_Nonzero_2States;
-	//}
-	//else if (model_uid == 315)
-	//{
-	//    printf("!!!! InitRoutines: model 315 needs to be updated. !!!!\n");
-
-	//    link->dim = 2;
-	//    link->no_ini_start = 2;
-	//    link->diff_start = 0;
-
-	//    link->num_dense = 1;
-	//    link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
-	//    link->dense_indices[0] = 0;
-
-	//    link->differential = &assim_river_rainfall_adjusted;
-	//    link->algebraic = NULL;
-	//    link->check_state = NULL;
-	//    link->check_consistency = &CheckConsistency_Nonzero_2States;
-	//}
-	/*
-	 else if(model_uid == 2000)
-	 {
-	 link->differential = &parser_test;
-	 link->algebraic = NULL;
-	 link->check_state = NULL;
-	 }
-	 */
 	else
 		printf("Warning: No ODE selected for link ID %u.\n", link->ID);
 }
@@ -2712,254 +2657,8 @@ void Precalculations(
     	vals[9] = (vals[6] * vals[7] * exp(10 * vals[7]))/(exp(21 * vals[7]));	// aTile
 	    vals[10] = vals[6] * vals[7] * exp(10 * vals[7]) - vals[8] * vals[7];	// LinIntercept
     }
-    /*else if (model_uid == 601)
-    {
-	//Order of parameters: A_i,L_i,A_h,slope,tileQ,invtau,aNo,actT,LinSl,aTile,LinIn,
-	//The numbering is:	0   1   2    3     4     5     6   7     8   9     10
-	//Order of global_params: v_r,lambda_1,lambda_2,tL,bL,kdry,ki,k2
-	//The numbering is:        0      1        2     3 4   5   6   7 
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-	    double slope = params[3];
-        double v_r = params[4];
-        double a_r = params[5];
-        double v_s = params[6];
-        double a_s = params[7];
-        double k1 = params[8];
-        double k2 = params[9];
-        double t_l = params[10];
-        double b_L = params[11];
-        double lambda_1 = params[12];
-        double lambda_2 = params[13];
-        double v_0 = params[14];   
 
-        vals[13] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-    }*/
-    else if (model_uid == 602)
-    {
-	//Order of parameters: A_i,L_i,A_h,slope,tileQ,invtau,aNo,actT,LinSl,aTile,LinIn,
-	//The numbering is:	0   1   2    3     4     5     6   7     8   9     10
-	//Order of global_params: v_r,lambda_1,lambda_2,tL,bL,kdry,ki,k2
-	//The numbering is:        0      1        2     3 4   5   6   7 
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-	    double slope = params[3];
-        double v_r = params[4];
-        double a_r = params[5];
-        double v_l = params[6];
-        double a_l = params[7];
-        double v_s = params[8];
-        double a_s = params[9];
-        double k1 = params[10];
-        double k2 = params[11];
-        double t_l = params[12];
-        double b_L = params[13];
-        double lambda_1 = params[14];
-        double lambda_2 = params[15];
-        double v_0 = params[16];   
-
-        vals[15] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-    }
-    else if (model_uid == 603)
-    {
-	//Order of parameters: A_i,L_i,A_h,slope,tileQ,invtau,aNo,actT,LinSl,aTile,LinIn,
-	//The numbering is:	0   1   2    3     4     5     6   7     8   9     10
-	//Order of global_params: v_r,lambda_1,lambda_2,tL,bL,kdry,ki,k2
-	//The numbering is:        0      1        2     3 4   5   6   7 
-        double* vals = params;
-        double Ai = params[0];
-        double Li = params[1];
-        double Ah = params[2];
-	    double slope = params[3];
-        double v1 = params[4];
-        double a1 = params[5];
-        double v2 = params[6];
-        double a2 = params[7];
-        double v3 = params[8];
-        double a3 = params[9]; 
-        double v4 = params[10];
-        double a4 = params[11];
-        double h1 = params[12];
-        double h2 = params[13];
-        double h3 = params[14];
-        double k1 = params[15];
-        double k2 = params[16];
-        double k3 = params[17];
-        double lambda1 = params[18];
-        double lambda2 = params[19];
-        double v0 = params[20];   
-
-        vals[19] = 60.0*v0*pow(Ai, lambda2) / ((1.0 - lambda1)*Li);	//[1/min]  invtau
-    }
-
-    else if (model_uid == 604)
-    {
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double v_r = params[3];
-        double a_r = params[4];
-        double v_s1 = params[5];
-        double v_s2 = params[6];
-        double k1 = params[7];
-        double k2 = params[8];
-        double t_L = params[9];
-        double Si = params[10];
-        double Sn = params[11];
-        double lambda_1 = params[12];
-        double lambda_2 = params[13];
-        double v0 = params[14];
-
-        vals[13] = 60.0*v0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[14] = v_s1*(Si - Sn);//(v_s1 - v_s2)*b_L;  //second line intercept coefficient
-
-    }
-
-    else if (model_uid == 605)
-    {
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double v_r = params[3];
-        double a_r = params[4];
-        double v_s1 = params[5];
-        double v_s2 = params[6];
-        double v_s3 = params[7];
-        double v_s4 = params[8];
-        double k1 = params[9];
-        double k2 = params[10];
-        double t_L = params[11];
-        double S1 = params[12];
-        double S2 = params[13];
-        double S3 = params[14];
-        double S4 = params[15];
-        double lambda_1 = params[16];
-        double lambda_2 = params[17];
-        double v0 = params[18];
-
-        vals[17] = 60.0*v0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[18] = v_r * (L_i / A_h) * 60; // [1/min] runoff speed.
-
-
-        vals[19] = v_s1*(S2 - S1);// first intercept
-        vals[20] = v_s2*(S3 - S2) + vals[19];// second intercept
-        vals[21] = v_s3*(S4 - S3) + vals[20] + vals[19];// third intercept
-
-    }
-
-
-    else if (model_uid == 606)
-    { 
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double v_r = params[3];
-        double a_r = params[4];
-        double a = params[5];
-        double b = params[6];
-        double m = params[7];
-        double mt = params[8];
-        double k1 = params[9];
-        double k2 = params[10];
-        double t_L = params[11];
-        double NoFlow = params[12];
-        double Td = params[13];
-        double Beta = params[14];
-        double lambda_1 = params[15];
-        double lambda_2 = params[16];
-        double v0 = params[17];
-
-        vals[16] = 60.0*v0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[17] = v_r * (L_i / A_h) * 60; // [1/min] runoff speed.
-    }
-
-    else if (model_uid == 608)
-    { 
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double v_r = params[3];
-        double a_r = params[4];
-        double a = params[5];
-        double b = params[6]; 
-        double c = params[7];
-        double d = params[8];
-        double k3 = params[9];
-        double ki_fac = params[10];
-        //double k2 = params[11];
-        double t_L = params[11];
-        double NoFlow = params[12];
-        double Td = params[13];
-        double Beta = params[14];
-        double lambda_1 = params[15];
-        double lambda_2 = params[16];
-        double v0 = params[17];
-        //double expo = params[18];
-
-        vals[16] = 60.0*v0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[17] = v_r * (L_i / A_h) * 60; // [1/min] runoff speed.
-    }
-
-    else if (model_uid == 609)
-    { 
-         double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double v_r = params[3];
-        double a_r = params[4];
-        double a = params[5];
-        double b = params[6]; 
-        double c = params[7];
-        double d = params[8];
-        double k3 = params[9];
-        double ki_fac = params[10];
-        //double k2 = params[11];
-        double t_L = params[11];
-        double NoFlow = params[12];
-        double Td = params[13];
-        double Beta = params[14];
-        double lambda_1 = params[15];
-        double lambda_2 = params[16];
-        double v0 = params[17];
-        //double expo = params[18];
-
-        vals[16] = 60.0*v0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[17] = v_r * (L_i / A_h) * 60; // [1/min] runoff speed.
-    }
-
-    else if (model_uid == 607)
-    { 
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double v_r = params[3];
-        double a_r = params[4];
-        double a = params[5];
-        double c = params[6];
-        double m = params[7];
-        double k1 = params[8];
-        double k2 = params[9];
-        double t_L = params[10];
-        double Beta = params[11];
-        double lambda_1 = params[12];
-        double lambda_2 = params[13];
-        double v0 = params[14];
-
-        vals[13] = 60.0*v0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[14] = v_r * (L_i / A_h) * 60; // [1/min] runoff speed.
-    }
-
-    else if (model_uid == 654)
+   /* else if (model_uid == 654)
     {
         //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
         //The numbering is:     0   1   2    3     4   5   6   7 
@@ -2985,7 +2684,7 @@ void Precalculations(
        // vals[4] = vals[3]* k_i_factor;                                  // [1/min] k_i
        // vals[12] = 60.0*v_0*pow(A_i, lambda_2)/((1.0 - lambda_1)*L_i);//[1/min]  invtau
        // vals[13] = A_h / 60.0;                                            // c_2
-    }
+    }*/
 
     if (model_uid == 250)
     {
@@ -3079,7 +2778,7 @@ void Precalculations(
         vals[14] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
         vals[15] = A_h / 60.0;	//  c_2
     }
-    else if (model_uid == 257)
+    /*else if (model_uid == 257)
     {
         //Order of parameters: A_i,L_i,A_h,horder,invtau,k_2,k_i,c_1,c_2
         //The numbering is:    0   1   2   3      4      5   6   7...8
@@ -3126,7 +2825,7 @@ void Precalculations(
         vals[5] = vals[4] * k_i_factor;	                                // [1/min] k_i
         vals[6] = (0.001 / 60.0);                                       // (mm/hr->m/min)  c_1
         vals[7] = A_h / 60.0;                                           // c_2
-    }
+    }*/
     else if (model_uid == 259)
     {
         //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
@@ -3169,7 +2868,7 @@ void Precalculations(
         vals[4] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
         vals[5] = A_h / 60.0;	//  c_2
     }
-    else if (model_uid == 261)
+    /*else if (model_uid == 261)
     {
         //Order of parameters: A_i,L_i,A_h,S_h,T_L,h_b,k_D,k_dry,k_i | invtau,c_1,c_2,c_3
         //The numbering is:	0   1   2   3   4   5   6   7     8  |   9     10  11  12
@@ -3211,7 +2910,7 @@ void Precalculations(
         vals[11] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
         vals[12] = A_h / 60.0;	//  c_2
         vals[13] = pow(S_h, 0.5)*L_i / (A_h*eta);	//k_2
-    }
+    }*/
   else if (model_uid == 263) {
 			double* vals = params;
 			double A_i = params[0];
@@ -3234,70 +2933,7 @@ void Precalculations(
 
 
 		}
-	else if (model_uid == 300 || model_uid == 301) {
-		/*
-		 //Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
-		 //The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
-		 //Order of global_params: v_r,lambda_1,lambda_2,Q_r,A_r,RC
-		 //The numbering is:        0      1        2     3   4   5
-		 //Need to set entries 12-19 of params.
-		 double* vals = params;
-		 double K_T = 1.0;
-		 double s_r = 1.0;
-		 double rootS_h = pow(vals[7],.5);
-		 double v_r = global_params[0];
-		 double lambda_1 = global_params[1];
-		 double lambda_2 = global_params[2];
-		 double Q_r = global_params[3];
-		 double A_r = global_params[4];
-		 double RC = global_params[5];
-
-		 vals[12] = 60.0*v_r*pow(vals[2]/A_r,lambda_2)/((1.0-lambda_1)*vals[0]);
-		 vals[13] = vals[3] / s_r;
-		 vals[14] = 2.0 / .6 * vals[0] * s_r / Q_r * 1.0 / vals[8] * rootS_h * pow(vals[3],2.0/3.0);
-		 vals[15] = vals[6] * vals[0] * vals[3] / (3600.0 * Q_r);
-		 vals[16] = 1e-3/(60*s_r) * RC;
-		 vals[17] = 60 * 1e-6 * 2.0 / .6 * vals[0] / vals[1] * 1.0 / vals[8] * rootS_h;
-		 vals[18] = K_T/60.0;
-		 vals[19] = vals[6]/(60.0*s_r);
-
-		 iparams[0] = link_i->location;
-		 */
-	} else if (model_uid == 315) {
-		/*
-		 //Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
-		 //The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
-		 //Order of global_params: v_r,lambda_1,lambda_2,v_h,A_r,RC
-		 //The numbering is:        0      1        2     3   4   5
-		 //Need to set entries 12-19 of params.
-		 double* vals = params;
-		 double K_T = 1.0;
-		 double s_r = 1.0;
-		 double rootS_h = pow(vals[7],.5);
-		 double L = params[0];
-		 double A_h = params[1] * 1e6;	//Put into m^2
-		 double eta = params[8];
-		 double v_r = global_params[0];
-		 double lambda_1 = global_params[1];
-		 double lambda_2 = global_params[2];
-		 double v_h = global_params[3];
-		 double A_r = global_params[4];
-		 double RC = global_params[5];
-
-
-		 vals[12] = 60.0*v_r*pow(vals[2]/A_r,lambda_2)/((1.0-lambda_1)*vals[0]);	//invtau [1/min]
-		 vals[13] = vals[3] / s_r; //epsilon
-		 vals[14] = v_h*L;	//c_1 [m^2/s]
-		 vals[15] = vals[6] * vals[0] * vals[3] / 3600.0; //c_2
-		 vals[16] = (1e-3/60.0) * RC;	//c_3
-		 vals[17] = 60.0*v_h*L/A_h;	//c_4 [1/min], A_h converted above
-		 vals[18] = K_T/60.0;
-		 vals[19] = vals[6]/(60.0*s_r);
-
-
-		 iparams[0] = link_i->location;
-		 */
-	} else if (model_uid == 400 || model_uid == 402 || model_uid==403) //tetis01 model
+	else if (model_uid == 400 || model_uid == 402 || model_uid==403) //tetis01 model
 		{
 		double* vals = params;
 		double A_i = params[0]; //upstream area of the hillslope
@@ -3387,35 +3023,6 @@ else if (model_uid == 405) //tetis01 model
 	}
 
 
-    else if (model_uid == 2000) {
-		//Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
-		//The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
-		//Order of global_params: v_r,lambda_1,lambda_2,Q_r,A_r,RC
-		//The numbering is:        0      1        2     3   4   5
-		//Need to set entries 12-19 of params.
-		double* vals = params;
-		double K_T = 1.0;
-		double s_r = 1.0;
-		double rootS_h = pow(vals[7], .5);
-		double v_r = global_params[0];
-		double lambda_1 = global_params[1];
-		double lambda_2 = global_params[2];
-		double Q_r = global_params[3];
-		double A_r = global_params[4];
-		double RC = global_params[5];
-
-		vals[12] = 60.0 * v_r * pow(vals[2] / A_r, lambda_2)
-				/ ((1.0 - lambda_1) * vals[0]);
-		vals[13] = vals[3] / s_r;
-		vals[14] = 2.0 / .6 * vals[0] * s_r / Q_r * 1.0 / vals[8] * rootS_h
-				* pow(vals[3], 2.0 / 3.0);
-		vals[15] = vals[6] * vals[0] * vals[3] / (3600.0 * Q_r);
-		vals[16] = 1e-3 / (60 * s_r) * RC;
-		vals[17] = 60 * 1e-6 * 2.0 / .6 * vals[0] / vals[1] * 1.0 / vals[8]
-				* rootS_h;
-		vals[18] = K_T / 60.0;
-		vals[19] = vals[6] / (60.0 * s_r);
-	}
 }
 
 //Set the initial condition for the differential equations a link. This method will be called once for each link. The differential
@@ -3446,7 +3053,7 @@ int ReadInitData(
         //For model_uid 21, just set the state
         return LinearHillslope_Evap_Check(y_0, params, global_params, qvs, 0);
     }
-    else if (model_uid == 21)
+   /* else if (model_uid == 21)
     {
         //For model_uid 21, only the storage (S or y_0[1]) has been set.
         //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,orifice_area,H_spill,H_max,S_max,alpha,orifice_diam,c_1,c_2,L_spill
@@ -3539,7 +3146,7 @@ int ReadInitData(
         }
         */
         return 0;
-    }
+    }*/
     else if ((model_uid == 191) || (model_uid == 192))
     {
         //For this model_uid, the extra states need to be set (3,4,5)
@@ -3694,7 +3301,7 @@ int ReadInitData(
         y_0[6] = 0.0;
         y_0[7] = y_0[0];
     }
-    else if (model_uid == 257)
+    /*else if (model_uid == 257)
     {
         //For this model_uid, the extra states need to be set (4,5,6,7)
         y_0[4] = 0.0;
@@ -3841,7 +3448,7 @@ int ReadInitData(
             y_0[i] = 0.0;
 
         return 0;
-    } else if (model_uid == 261) {
+    }*/ else if (model_uid == 261) {
 		//Discharges are initially read into y_0[1] when no dam is present. So y_0[1] is copied to y_0[0],
 		//then the corresponding storage is moved into y_0[1]. When a dam is present, y_0[1] will have the storage.
 		//So the discharge can be calculated and stored into y_0[0].
@@ -3919,7 +3526,7 @@ int ReadInitData(
 		y_0[6] = 0.0;
 		y_0[7] = y_0[0];
 	}
-	else if (model_uid == 300) {
+	/*else if (model_uid == 300) {
 		/*
 		 //For this model_uid, all initial conditions for variational equation must be set here.
 		 //Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
@@ -3966,7 +3573,7 @@ int ReadInitData(
 			y_0[i] = 0.0;
 
 		return 0;
-	} else if (model_uid == 400)        //tetis
+	}*/ else if (model_uid == 400)        //tetis
 		{
 
 	    } 
