@@ -22,7 +22,7 @@ double nrminf(const double * restrict const v, unsigned int begin, unsigned int 
 /// max(v_i / w_i)
 double nrminf2(const double * restrict const v, const double * restrict const w, unsigned int begin, unsigned int end);
 
-void daxpy(double alpha, const double * restrict const x, double * restrict y, unsigned int begin, unsigned int end//void sv_mlt(double val, VEC v, unsigned int begin);
+void daxpy(double alpha, const double * restrict const x, double * restrict y, unsigned int begin, unsigned int end);
 
 // scales a vector by a constant
 void dscal(double val, double * restrict v, unsigned int begin, unsigned int end);
