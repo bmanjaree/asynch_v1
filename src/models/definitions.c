@@ -389,7 +389,7 @@ case 20:	num_global_params = 9;
         break;
 
     
-    case 601:	num_global_params = 1;
+    /*case 601:	num_global_params = 1;
         globals->uses_dam = 0;
         globals->num_params = 14;
         globals->dam_params_size = 0;
@@ -400,7 +400,7 @@ case 20:	num_global_params = 9;
         globals->num_forcings = 2;
         globals->min_error_tolerances = 3;
         break;
-
+     */ 
     case 602:	num_global_params = 1;
         globals->uses_dam = 0;
         globals->num_params = 16;
@@ -1497,7 +1497,7 @@ void InitRoutines(
         //link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
     }
     
-    else if (model_uid == 601)
+    /*else if (model_uid == 601)
     {
         link->dim = 4;
         link->no_ini_start = link->dim;
@@ -1511,7 +1511,7 @@ void InitRoutines(
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_4States;
         //link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-    }
+    }*/
     
 
     else if (model_uid == 602)
@@ -2712,7 +2712,7 @@ void Precalculations(
     	vals[9] = (vals[6] * vals[7] * exp(10 * vals[7]))/(exp(21 * vals[7]));	// aTile
 	    vals[10] = vals[6] * vals[7] * exp(10 * vals[7]) - vals[8] * vals[7];	// LinIntercept
     }
-    else if (model_uid == 601)
+    /*else if (model_uid == 601)
     {
 	//Order of parameters: A_i,L_i,A_h,slope,tileQ,invtau,aNo,actT,LinSl,aTile,LinIn,
 	//The numbering is:	0   1   2    3     4     5     6   7     8   9     10
@@ -2736,7 +2736,7 @@ void Precalculations(
         double v_0 = params[14];   
 
         vals[13] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-    }
+    }*/
     else if (model_uid == 602)
     {
 	//Order of parameters: A_i,L_i,A_h,slope,tileQ,invtau,aNo,actT,LinSl,aTile,LinIn,
