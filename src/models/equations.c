@@ -616,7 +616,7 @@ void TilesModel_Base(double t, const double * const y_i, unsigned int dim, const
     double d = params[8];
     double k3 = params[9];
     double ki_fac = params[10];
-    double t_L = params[11]; //* forcing_values[3];
+    double t_L = params[11]; // forcing_values[3];
     double NoFlow = params[12];
     double Td = params[13];
     double Beta = params[14];
@@ -784,10 +784,7 @@ void Variable_TopLayer(double t, const double * const y_i, unsigned int dim, con
     ans[2] = q_pt - q_ts - e_t;
     ans[3] = q_ts - q_sl - e_s;
 
-}
-
-
-*/
+}*/
 
 //Type 225
 //This model is used for the tiling experiments. The rainfall will run through the hillslope and requires an if/then statement. The variables are river flow, ponded, top layer, subsurface layer
@@ -1865,8 +1862,8 @@ void model263(double t, const double * const y_i, unsigned int dim, const double
     //pow using q not q_b to move at same flow velocity that state0
     ans[4] = invtau * pow(q, lambda_1) * ans[4];    // baseflow[0]
 }
-*/
-/*
+
+
 //Type 264: similar to model 256, with a forcing for snowmelt
 //Contains 3 layers on hillslope: ponded, top layer, soil. Also has 3 extra states: total precip, total ET, total runoff, base flow
 //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
@@ -2243,8 +2240,8 @@ void OfflineTopLayerInterflowHillslope_Reservoirs(double t, const double * const
     ans[1] = 0.0;
     ans[2] = 0.0;
     ans[3] = 0.0;
-}
-*/
+}*/
+
 //Type 400
 //Tetis model structure for runoff generation + normal routing (NO stream order based velocity)
 //Four layers
@@ -4431,45 +4428,6 @@ void Hillslope_Toy(double t, const double * const y_i, unsigned int dim, const d
     double A_p = global_params[6];
     double A_a = global_params[7];
 
-    /*
-    //For gamma
-    double beta = global_params[3];
-    double k_p = global_params[4];
-    double k_a = global_params[5];
-    double theta_p = global_params[6];
-    double theta_a = global_params[7];
-    double scale_p = global_params[8];
-    double scale_a = global_params[9];
-    */
-    /*
-    //For lognormal
-    double mu = global_params[3];
-    double sigma2 = global_params[4];
-    */
-    /*
-    //For exponential
-    double lambda = global_params[3];
-    double scale = global_params[4];
-    */
-    /*
-    //For line and drop
-    double t_p = global_params[3];
-    double p = global_params[4];
-    double alpha = global_params[5];
-    */
-    /*
-    //For GEV
-    double mu = global_params[3];
-    double sigma = global_params[4];
-    double ksi = global_params[5];
-    double shift = global_params[6];
-    */
-    /*
-    //For linear
-    double k2 = global_params[3];
-    double k3 = global_params[4];
-    double scale = global_params[5];
-    */
     //General use
     double A_h = params[2];
     double invtau = params[3];
@@ -4486,44 +4444,6 @@ void Hillslope_Toy(double t, const double * const y_i, unsigned int dim, const d
     double Q_al = A_a * (exp(alpha*s_a) - 1.0);
     double Q_pa = beta * s_p;
 
-    /*
-    //For Gamma Forcing Model
-    //double Q_pl = A_p * pow(sin(omega*s_p),2.0);
-    //double Q_al = A_a * (exp(alpha*s_a) - 1.0);
-    double Q_pl = scale_p * c_1 * pow(t,k_p-1.0) * exp(-t/theta_p); //[m/min]
-    //double Q_al = 0.0;
-    double Q_al = scale_a * c_2 * pow(t,k_a-1.0) * exp(-t/theta_a); //[m/min]
-    double Q_pa = beta * s_p; //[m/min]
-    */
-    /*
-    //For Log Normal Forcing Model
-    double Q_pl = (t <= 0.0) ? 0.0 : c_1/t * exp( -sq(log(t)-mu)/(2.0*sigma2) );
-    double Q_al = 0.0;
-    */
-    /*
-    //For Exponential Forcing Model
-    double Q_pl = scale * lambda * exp(-lambda*t);
-    double Q_al = 0.0;
-    */
-    /*
-    //For Line and Drop Model
-    double Q_pl = (t <= t_p) ? p/t_p * t : p * exp(-alpha*(t-t_p));
-    double Q_al = 0.0;
-    */
-    /*
-    //For GEV
-    double holder = pow(1.0 + (t-shift-mu)/sigma*ksi,-1.0/ksi);
-    //double holder = (t < 25.0) ? pow(1.0 + (t-shift-mu)/sigma*ksi,-1.0/ksi) : 0.0;
-    //double holder = (t < 6.0 + shift) ? pow(1.0 + (t-shift-mu)/sigma*ksi,-1.0/ksi) : 0.0;
-    //double holder = (t < 1000.0 + shift) ? pow(1.0 + (t-shift-mu)/sigma*ksi,-1.0/ksi) : 0.0;
-    double Q_pl = 1.0/sigma * pow(holder,ksi+1) * exp(-holder);
-    double Q_al = 0.0;
-    */
-    /*
-    //For Linear Model
-    double Q_pl = scale * (k2 * 0.015 * exp(-k2*t) + k3 * 0.015 * exp(-k3*t));
-    double Q_al = 0.0;
-    */
     //Discharge
     ans[0] = -q + (Q_pl + Q_al) * A_h / 60.0;
     for (i = 0; i<num_parents; i++)
