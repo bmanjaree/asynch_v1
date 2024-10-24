@@ -3527,7 +3527,7 @@ int ReadInitData(
 		y_0[7] = y_0[0];
 	}
 	/*else if (model_uid == 300) {
-		/*
+		
 		 //For this model_uid, all initial conditions for variational equation must be set here.
 		 //Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
 		 //The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
@@ -3537,10 +3537,10 @@ int ReadInitData(
 		 unsigned int offset = model_uid - 299;
 		 for(i=offset;i<y_0.dim;i++)	y_0[i] = 0.0;
 		 y_0[iparams[0] + offset] = 1.0;
-		 */
+		 
 		return 0;
 	} else if (model_uid == 301) {
-		/*
+		
 		 //For this model_uid, all initial conditions for variational equation must be set here.
 		 //Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
 		 //The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
@@ -3554,7 +3554,7 @@ int ReadInitData(
 		 y_0[offset + 1] = 1.0;
 		 y_0[offset + 2] = 0.0;
 		 for(i=offset+3;i<y_0.dim;i++)	y_0[i] = 0.0;
-		 */
+		 
 		return 0;
 	} else if (model_uid == 315) {
 		//For this model_uid, all initial conditions for variational equation must be set here.
