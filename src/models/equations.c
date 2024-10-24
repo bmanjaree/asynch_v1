@@ -3994,14 +3994,6 @@ void LinearHillslope_MonthlyEvap(double t, const double * const y_i, unsigned in
     ans[1] = forcing_values[0] * c_1 - q_pl - e_p;
     ans[2] = forcing_values[0] * c_2 - q_al - e_a;
 
-    /*
-    if ((s_p > 0.000010) && (s_p < 0.000012) && (t < 200)) {
-        printf("time: %f\n", t);
-        printf(" forc: %f %f\n", forcing_values[0], forcing_values[1]);
-        printf(" flux: %f %f\n", ans[1], ans[2]);
-        printf(" state: %f %f %f\n", q, s_p, s_a);
-    }
-    */
 }
 
 
@@ -4306,17 +4298,6 @@ void LinearHillslope_MonthlyEvap_OnlyRouts(double t, const double * const y_i, u
 	//Accumulated precip
 	ans[3] = q_rp + q_ra;
 
-    /*
-    if (t < 0.030) {
-        printf("time: %f\n", t);
-    } else if ((t > 0.030) && (t < 0.035)) {
-        printf("time: %f\n", t);
-        printf(" forc: %f %f %f\n", forcing_values[0], forcing_values[1], forcing_values[2]);
-        printf(" semi: %f %f\n", q_rp, q_ra);
-        printf(" flux: %f %f\n", ans[1], ans[2]);
-        printf(" state: %f %f %f %f\n", q, s_p, s_a, acc);
-    }
-    */
 }
 
 
@@ -5437,23 +5418,6 @@ void qsav_rainfall(double t, const double * const y_i, unsigned int dim, const d
     double polyterm = d_0 * v_adj + d_1 * v_adj * sq(a_adj) + d_2 * sq(a_adj);
     double expterm = exp(a_adj / c_4);
 
-    //Evaporation
-    /*
-    double c_evap = 1.0/60.0;
-    if(t < 8000.0)		c_evap *= 0.002;
-    else if(t < 15000.0)	c_evap *= 0.0005;
-    else if(t < 30000.0)	c_evap *= 0.0001;
-    else			c_evap = 0.0;
-
-    double evap;
-    if(t < 5000.0)		evap = 0.62;
-    else if(t < 18000.0)	evap = 0.48;
-    else if(t < 25000.0)	evap = 0.5;
-    else if(t < 30000.0)	evap = 0.48;
-    else if(t < 35000.0)	evap = 0.51;
-    else if(t < 40000.0)	evap = 0.44;
-    else			evap = 0.3;
-    */
     double c_evap = 0.0;
     double evap = 0.0;
 
