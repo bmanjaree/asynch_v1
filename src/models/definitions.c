@@ -1074,13 +1074,13 @@ void InitRoutines(
         link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
         link->dense_indices[0] = 0;
 
-        link->differential = &simple_river;
-        link->jacobian = &Jsimple;
+       // link->differential = &simple_river;
+       // link->jacobian = &Jsimple;
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_1States;
     }
-    else if (model_uid == 1 || model_uid == 3)
+    /*else if (model_uid == 1 || model_uid == 3)
     {
         link->dim = 2;
         link->no_ini_start = link->dim;
@@ -1094,7 +1094,7 @@ void InitRoutines(
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_2States;
-    }
+    }*/
     else if (model_uid == 2)
     {
         link->dim = 2;
@@ -1110,7 +1110,7 @@ void InitRoutines(
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_2States;
     }
-    else if (model_uid == 4)
+    /*else if (model_uid == 4)
     {
         link->dim = 4;
         link->no_ini_start = link->dim;
@@ -1325,7 +1325,7 @@ void InitRoutines(
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_2States;
-    }
+    }*/
     else if (model_uid == 190)
     {
         link->dim = 3;
@@ -1428,7 +1428,7 @@ void InitRoutines(
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
     }
-	else if (model_uid == 196)
+	/*else if (model_uid == 196)
 	{
 		link->dim = 5;
 		link->no_ini_start = 3;
@@ -1497,7 +1497,7 @@ void InitRoutines(
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_4States;
         //link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-    }
+    }*/
     
     /*else if (model_uid == 601)
     {
