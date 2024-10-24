@@ -3053,7 +3053,7 @@ int ReadInitData(
         //For model_uid 21, just set the state
         return LinearHillslope_Evap_Check(y_0, params, global_params, qvs, 0);
     }
-   /* else if (model_uid == 21)
+   /*else if (model_uid == 21)
     {
         //For model_uid 21, only the storage (S or y_0[1]) has been set.
         //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,orifice_area,H_spill,H_max,S_max,alpha,orifice_diam,c_1,c_2,L_spill
@@ -3132,20 +3132,20 @@ int ReadInitData(
         //The numbering is:     0   1   2    3   4       5         6    7   8    9 10 11  12  13  14  15  16  17  18  19  20
         //Order of global_params: v_0,lambda_1,lambda_2,Q_r,A_r,K_T,C_r,e_pot
         //The numbering is:        0      1        2     3   4   5   6   7
-        /*
-        double H_h = params[4];
+       
+        //double H_h = params[4];
 
-        params[9] = 1.0;
-        params[10] = 0.0;
-        params[11] = 0.0;
+        //params[9] = 1.0;
+        //params[10] = 0.0;
+        //params[11] = 0.0;
 
-        if(H_h < 1e-12)		//Flat surface
-        {
-        y_0[2] = 0.0;
-        y_0[3] = 0.0;
-        }
-        */
-        return 0;
+        //if(H_h < 1e-12)		//Flat surface
+        //{
+        //y_0[2] = 0.0;
+        //y_0[3] = 0.0;
+        //}
+        
+        //return 0;
     }*/
     else if ((model_uid == 191) || (model_uid == 192))
     {
