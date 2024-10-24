@@ -3124,7 +3124,7 @@ int ReadInitData(
         dam_q_qvs(y_0, dim, global_params, params, qvs, state, user, y_0);
 
         return state;
-    }
+    }*/
     else if (model_uid == 30)
     {
         //y_i has q (y_i[0]), s_p (y_i[1]), h_w (y_i[2]), theta (y_i[3])
@@ -3146,7 +3146,7 @@ int ReadInitData(
         //}
         
         //return 0;
-    }*/
+    }
     else if ((model_uid == 191) || (model_uid == 192))
     {
         //For this model_uid, the extra states need to be set (3,4,5)
@@ -3154,7 +3154,8 @@ int ReadInitData(
         y_0[4] = 0.0;
         y_0[5] = y_0[0];	//I'm not really sure what to use here...
     }
-	else if (model_uid==193 || model_uid==194){return 0;}
+    else if (model_uid==193 || model_uid==194)
+    {return 0;}
     else if (model_uid == 195)
     {
         //For this model_uid, the extra states need to be set (3)
@@ -3164,42 +3165,49 @@ int ReadInitData(
     {
         y_0[3] = 0.0;  // zero precip accumulation
         y_0[4] = 0.0;  // zero runoff accumulation
-    } else if (model_uid == 200) {
-		//For model_uid 200, only the discharge has been set. Need to set the storage.
-		//Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
-		//The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
-		//Order of global_params: v_0,lambda_1,lambda_2,Q_r,A_r,RC,u_0
-		//The numbering is:        0      1        2     3   4   5  6
-		y_0[1] = params[0] / (global_params[6] + global_params[0]) * y_0[0];
-		return 0;
-	}else if (model_uid == 249) {
-		//For this model_uid, the extra states need to be set (4,5,6)
-		y_0[4] = y_0[0];
-		y_0[5] = y_0[0];
-	}
-     else if (model_uid == 254) {
-		//For this model_uid, the extra states need to be set (4,5,6)
-		y_0[4] = 0.0;
-		y_0[5] = 0.0;
-		y_0[6] = y_0[0];
-	} else if (model_uid == 255) {
-		//Discharges are initially read into y_0[1] when no dam is present. So y_0[1] is copied to y_0[0],
-		//then the corresponding storage is moved into y_0[1]. When a dam is present, y_0[1] will have the storage.
-		//So the discharge can be calculated and stored into y_0[0].
+    } 
+    else if (model_uid == 200)
+    {
+	//For model_uid 200, only the discharge has been set. Need to set the storage.
+	//Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
+	//The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
+	//Order of global_params: v_0,lambda_1,lambda_2,Q_r,A_r,RC,u_0
+	//The numbering is:        0      1        2     3   4   5  6
+	y_0[1] = params[0] / (global_params[6] + global_params[0]) * y_0[0];
+	return 0;
+    }
+    else if (model_uid == 249)
+    {
+	//For this model_uid, the extra states need to be set (4,5,6)
+	y_0[4] = y_0[0];
+	y_0[5] = y_0[0];
+    }
+    else if (model_uid == 254)
+    {
+	//For this model_uid, the extra states need to be set (4,5,6)
+	y_0[4] = 0.0;
+	y_0[5] = 0.0;
+	y_0[6] = y_0[0];
+    }
+    /*else if (model_uid == 255)
+    {
+	//Discharges are initially read into y_0[1] when no dam is present. So y_0[1] is copied to y_0[0],
+	//then the corresponding storage is moved into y_0[1]. When a dam is present, y_0[1] will have the storage.
+	//So the discharge can be calculated and stored into y_0[0].
 
-		//Contains 2 layers in the channel: discharge, storage. Contains 3 layers on hillslope: ponded, top layer, soil.
-		//Order of the states is:              0          1                                        2        3       4
-		//Order of parameters: A_i,L_i,A_h,v_h,k_3,k_I_factor,h_b,S_L,A,B,exponent | invtau,k_2,k_i,c_1,c_2
-		//The numbering is:	0   1   2   3   4      5       6   7  8 9   10        11    12  13  14  15
-		//Order of global_params: v_0,lambda_1,lambda_2
-		//The numbering is:        0      1        2
+	//Contains 2 layers in the channel: discharge, storage. Contains 3 layers on hillslope: ponded, top layer, soil.
+	//Order of the states is:              0          1                                        2        3       4
+	//Order of parameters: A_i,L_i,A_h,v_h,k_3,k_I_factor,h_b,S_L,A,B,exponent | invtau,k_2,k_i,c_1,c_2
+	//The numbering is:	0   1   2   3   4      5       6   7  8 9   10        11    12  13  14  15
+	//Order of global_params: v_0,lambda_1,lambda_2
+	//The numbering is:        0      1        2
 
-		if (dam) {
-			unsigned int i;
-			y_0[0] = y_0[1];
-			for (i = 0; i < qvs->n_values - 1; i++)
-				if (qvs->points[i][1] <= y_0[0]
-						&& y_0[0] < qvs->points[i + 1][1])
+	if (dam)
+	 {
+		unsigned int i;
+		y_0[0] = y_0[1];
+		for (i = 0; i < qvs->n_values - 1; i++)
+			if (qvs->points[i][1] <= y_0[0]						&& y_0[0] < qvs->points[i + 1][1])
 					break;
 			if (i == qvs->n_values - 1) {
 				y_0[0] = qvs->points[i][1];
@@ -3220,13 +3228,15 @@ int ReadInitData(
 					* pow(y_0[0], 1.0 - lambda_1);
 			return -1;
 		}
-	} else if (model_uid == 256 || model_uid == 264) {
+	}
+	 else if (model_uid == 256 || model_uid == 264) {
 		//For this model_uid, the extra states need to be set (4,5,6,7)
 		y_0[4] = 0.0;
 		y_0[5] = 0.0;
 		y_0[6] = 0.0;
 		y_0[7] = y_0[0];
-	} else if (model_uid == 257) {
+	}
+	 else if (model_uid == 257) {
 		//For this model_uid, the extra states need to be set (4,5,6,7)
 		y_0[4] = 0.0;
 		y_0[5] = 0.0;
@@ -3242,7 +3252,7 @@ int ReadInitData(
         //The numbering is:        0      1        2     3   4   5  6
         y_0[1] = params[0] / (global_params[6] + global_params[0]) * y_0[0];
         return 0;
-    }
+    }*/
     else if (model_uid == 254)
     {
         //For this model_uid, the extra states need to be set (4,5,6)
@@ -3250,7 +3260,7 @@ int ReadInitData(
         y_0[5] = 0.0;
         y_0[6] = y_0[0];
     }
-    else if (model_uid == 255)
+    /*else if (model_uid == 255)
     {
         //Discharges are initially read into y_0[1] when no dam is present. So y_0[1] is copied to y_0[0],
         //then the corresponding storage is moved into y_0[1]. When a dam is present, y_0[1] will have the storage.
@@ -3292,7 +3302,7 @@ int ReadInitData(
             y_0[1] = tau_in_secs / (1.0 - lambda_1) * pow(y_0[0], 1.0 - lambda_1);
             return -1;
         }
-    }
+    }*/
     else if (model_uid == 256)
     {
         //For this model_uid, the extra states need to be set (4,5,6,7)
@@ -3448,7 +3458,8 @@ int ReadInitData(
             y_0[i] = 0.0;
 
         return 0;
-    }*/ else if (model_uid == 261) {
+    }*/
+    else if (model_uid == 261) {
 		//Discharges are initially read into y_0[1] when no dam is present. So y_0[1] is copied to y_0[0],
 		//then the corresponding storage is moved into y_0[1]. When a dam is present, y_0[1] will have the storage.
 		//So the discharge can be calculated and stored into y_0[0].
@@ -3527,7 +3538,7 @@ int ReadInitData(
 		y_0[7] = y_0[0];
 	}
 	/*else if (model_uid == 300) {
-		/*
+		
 		 //For this model_uid, all initial conditions for variational equation must be set here.
 		 //Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
 		 //The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
@@ -3537,10 +3548,10 @@ int ReadInitData(
 		 unsigned int offset = model_uid - 299;
 		 for(i=offset;i<y_0.dim;i++)	y_0[i] = 0.0;
 		 y_0[iparams[0] + offset] = 1.0;
-		 */
+		
 		return 0;
 	} else if (model_uid == 301) {
-		/*
+		
 		 //For this model_uid, all initial conditions for variational equation must be set here.
 		 //Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
 		 //The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
@@ -3554,7 +3565,7 @@ int ReadInitData(
 		 y_0[offset + 1] = 1.0;
 		 y_0[offset + 2] = 0.0;
 		 for(i=offset+3;i<y_0.dim;i++)	y_0[i] = 0.0;
-		 */
+		 
 		return 0;
 	} else if (model_uid == 315) {
 		//For this model_uid, all initial conditions for variational equation must be set here.
@@ -3573,11 +3584,12 @@ int ReadInitData(
 			y_0[i] = 0.0;
 
 		return 0;
-	}*/ else if (model_uid == 400)        //tetis
+	}*/ 
+        else if (model_uid == 400)        //tetis
 		{
 
 	    } 
-    else if (model_uid == 401)        //tetis
+        else if (model_uid == 401)        //tetis
 	    {
 
 	    }
