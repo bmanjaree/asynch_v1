@@ -27,41 +27,6 @@
 //int state: The current state of the system
 //double *ans (set by method, assumed that space is allocated): The value returned by the right-hand side function
 
-/*
-//Type 2000
-//Test for equations from a parser. Same as Type 1.
-//Calculates the flow using simple parameters, using only the flow q.
-//Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
-//The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
-//Order of global_params: v_r,lambda_1,lambda_2,Q_r,A_r,RC
-//The numbering is:        0      1        2     3   4   5
-//This uses the units and functions from September 18, 2011 document
-//y_i[0] = q, y_i[1] = s
-void parser_test(double t,double *y_i,double *y_p,unsigned short num_parents, unsigned int max_dim,double *global_params,double *forcing_values,QVSData *qvs,double *params,int state,void* user,double *ans)
-{
-unsigned int i;
-unsigned int dim = y_i.dim;
-double *tempresult;
-double inflow = 0.0;
-
-Formula* equations = (Formula*) qvs;	//!!!! Pass in somehow !!!!
-muParserHandle_t* parser = equations->parser;
-double *variable_values = equations->variable_values;
-//int numvars = mupGetVarNum(parser);
-
-
-//Set variables
-for(i=0;i<dim;i++)	variable_values.ve[i] = y_i[i];	//States
-variable_values.ve[dim] = t;					//Time
-for(i=0;i<num_parents;i++)	inflow += y_p[i * dim];
-variable_values.ve[dim+1] = inflow;				//Inflow
-variable_values.ve[dim+2] = forcing_values[0];			//Rainfall
-
-//Evaluate equations
-tempresult = mupEvalMulti(parser,&i);
-for(i=0;i<dim;i++)	ans[i] = tempresult[i];
-}
-*/
 
 
 double sq(double x) { return x * x; }
