@@ -3621,9 +3621,8 @@ int ReadInitData(
 	return 0;
 }
 
-/*
  //If using data assimilation, sets the global errors and dim correctly
- void AssimError(unsigned int N,UnivVars* GlobalVars,ErrorData* GlobalErrors)
+void AssimError(unsigned int N,UnivVars* GlobalVars,ErrorData* GlobalErrors)
  {
  unsigned int i,j;
  unsigned int old_num_dense;
@@ -3667,4 +3666,4 @@ int ReadInitData(
  globals->dense_indices[i] = (i-old_num_dense) + globals->problem_dim;
  }
  }
- */
+
