@@ -3621,49 +3621,4 @@ int ReadInitData(
 	return 0;
 }
 
- //If using data assimilation, sets the global errors and dim correctly
-void AssimError(unsigned int N,UnivVars* GlobalVars,ErrorData* GlobalErrors)
- {
- unsigned int i,j;
- unsigned int old_num_dense;
-
- //Remove any variaional indices from dense_indices
- for(i=0;i<globals->num_dense;i++)
- {
- if(globals->dense_indices[i] >= globals->problem_dim)
- {
- for(j=i+1;j<globals->num_dense;j++)	globals->dense_indices[j-1] = globals->dense_indices[j];
- (globals->num_dense)--;
- i--;
- }
- }
-
- old_num_dense = globals->num_dense;
-
- GlobalVars.dim = globals->problem_dim + N*globals->problem_dim*globals->problem_dim;
- globals->num_dense += N*globals->problem_dim*globals->problem_dim;
- GlobalErrors->abstol = realloc(GlobalErrors->abstol,GlobalVars.dim*sizeof(double));
- GlobalErrors->reltol = realloc(GlobalErrors->reltol,GlobalVars.dim*sizeof(double));
- GlobalErrors->abstol_dense = realloc(GlobalErrors->abstol_dense,GlobalVars.dim*sizeof(double));
- GlobalErrors->reltol_dense = realloc(GlobalErrors->reltol_dense,GlobalVars.dim*sizeof(double));
- GlobalErrors->abstol.dim = GlobalErrors->reltol.dim = GlobalErrors->reltol_dense.dim = GlobalErrors->reltol_dense.dim = GlobalVars.dim;
-
- //Setup error
- for(i=globals->problem_dim+1;i<GlobalVars.dim;i++)
- {
- GlobalErrors->abstol[i] = GlobalErrors->abstol[globals->problem_dim];
- GlobalErrors->reltol[i] = GlobalErrors->reltol[globals->problem_dim];
- GlobalErrors->abstol_dense[i] = GlobalErrors->abstol_dense[globals->problem_dim];
- GlobalErrors->reltol_dense[i] = GlobalErrors->reltol_dense[globals->problem_dim];
- }
-
- //Setup dense indices
- //Add in variational indices
- globals->dense_indices = realloc(globals->dense_indices,globals->num_dense * sizeof(unsigned int));
- for(i=old_num_dense;i<globals->num_dense;i++)
- {
- //globals->dense_indices[i] = i;
- globals->dense_indices[i] = (i-old_num_dense) + globals->problem_dim;
- }
- }
 
