@@ -5631,12 +5631,6 @@ void lcuencas_soilrain(double t, const double * const y_i, unsigned int dim, con
 
     //Soil volumetric water content
     ans[3] = (v_sunsat < 1e-6) ? 0.0 : c_6 / v_sunsat * (q_pu - q_us - e_unsat + theta*(q_us - q_sl - e_sat));
-    /*
-    dump.ve[0] = e_p + e_sat + e_unsat;
-    dump.ve[1] = q_pu;
-    dump.ve[2] = q_pl;
-    dump.ve[3] = q_sl;
-    */
 }
 
 
