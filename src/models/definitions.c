@@ -1361,7 +1361,7 @@ void InitRoutines(
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-    }*/
+    }
     else if (model_uid == 192)
     {
         link->dim = 6;
@@ -1382,7 +1382,7 @@ void InitRoutines(
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-    }
+    }*/
         else if (model_uid == 193)
     {
         link->dim = 1;
