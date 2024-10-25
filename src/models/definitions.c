@@ -226,124 +226,21 @@ void ConvertParams(
     unsigned int model_uid,
     void* external)
 {
-    if (model_uid == 19)
+    if (model_uid == 193 ||  model_uid==194)
     {
         params[1] *= 1000;	//L: km -> m
         params[2] *= 1e6;	//A_h: km^2 -> m^2
     }
-    else if (model_uid == 190 || model_uid == 191 || model_uid == 192 ||  model_uid==193 || model_uid==194 || model_uid == 195 || model_uid == 196)
-    {
-        params[1] *= 1000;	//L: km -> m
-        params[2] *= 1e6;	//A_h: km^2 -> m^2
-    }
-    else if (model_uid == 20)
-    {
-        //params[0] *= 1e6;	//km^2 -> m^2
-        params[1] *= 1000;	//km -> m
-        params[2] *= 1e6;	//km^2 -> m^2
-    }
-    else if (model_uid == 60)
-    {
-        params[1] *= 1000;	//L: km -> m
-        params[2] *= 1e6;	//A_h: km^2 -> m^2
-        params[3] *= 1e-3;	//h_b: mm->m
-    }
-    else if (model_uid == 21)
-    {
-        //params[0] *= 1e6;	//km^2 -> m^2
-        params[1] *= 1000;	//km -> m
-        params[2] *= 1e6;	//km^2 -> m^2
-    }
-    else if (model_uid == 22 || model_uid == 23 || model_uid == 40)
-    {
-        //params[0] *= 1e6;	//km^2 -> m^2
-        params[1] *= 1000;	//km -> m
-        params[2] *= 1e6;	//km^2 -> m^2
-    }
-    else if (model_uid <= 5)
-    {
-        params[0] *= 1000;	//km -> m
-        params[3] *= .001;	//mm -> m
-        params[4] *= .001;	//mm -> m
-    }
-    else if (model_uid == 6)
-    {
-        params[0] *= 1000;	//km -> m
-        params[3] *= .001;	//mm -> m
-    }
-    else if (model_uid == 15 || model_uid == 315)
-    {
-        params[0] *= 1000;	//L: km -> m
-        params[3] *= .001;	//h_b: mm -> m
-        params[4] *= .001;	//h_H: mm -> m
-    }
-    else if (model_uid == 30)
-    {
-        params[0] *= 1000;		//L_h:  km -> m
-        params[4] *= .001;		//H_h:  mm -> m
-        params[5] *= 1000.0; 	//MaxInfRate:  m/hr -> mm/hr
-    }
-    else if (model_uid == 105)
-    {
-        params[0] *= 1000;	//km -> m
-        params[3] *= .001;	//mm -> m
-        params[4] *= .001;	//mm -> m
-    }
-    else if (model_uid == 200)	//!!!! Did I screw these up on accident?!!!!
-    {
-        params[0] *= 1000;	//L_h:  km -> m
-                                /*
-                                //params[3] *= .001;	//mm -> m
-                                params[4] *= .001;	//H_h:  mm -> m
-                                params[5] *= 1000.0; //MaxInfRate:  m/hr -> mm/hr
-                                */
-    }
-    else if (model_uid == 219 || model_uid == 225)
-    {
-        params[1] *= 1000;	//L: km -> m
-        params[2] *= 1e6;	//A_h: km^2 -> m^2
-    }
-    //else if (model_uid == 601 || model_uid == 602 || model_uid == 603 || model_uid == 604 || model_uid == 605 || model_uid == 606 || model_uid == 607)
-    //{
-    //    params[1] *= 1000; //L: km -> m
-    //    params[2] *= 1e6; // Ah: km^2 -> m^2
-    //}
-
-    else if (model_uid == 654 || model_uid == 608 || model_uid == 609)
-    {
-        params[1] *= 1000; //L: km -> m
-        params[2] *= 1e6; // Ah: km^2 -> m^2
-    } 
-    else if (model_uid == 250)
-    {
-        params[1] *= 1000;		//L_h: km -> m
-        params[2] *= 1e6;		//A_h: km^2 -> m^2
-        params[4] *= .001;		//H_h: mm -> m
-    }
-    else if (model_uid == 249 || model_uid == 251 || model_uid == 252 || model_uid == 253 || 
-    model_uid == 254 || model_uid == 255 || model_uid == 256 || model_uid == 257 || model_uid == 258 ||
-     model_uid == 259 || model_uid == 260 || model_uid == 261 || model_uid == 262 || model_uid == 263 || 
-     model_uid == 264 || model_uid==400 || model_uid==401 || model_uid==402 || model_uid==403 || model_uid==405 )
+    else if (model_uid == 254 ||  model_uid==400 || model_uid==401 || model_uid==402 || model_uid==403 || model_uid==405 )
     {
         
         params[1] *= 1000;		//L_h: km -> m
         params[2] *= 1e6;		//A_h: km^2 -> m^2
     }
-    else if(model_uid==404){
+    else if(model_uid==404)
+    {
         params[1] *= 1000;		//L_h: km -> m
         params[2] *= 1e6;		//A_h: km^2 -> m^2
-    }
-    else if (model_uid == 300 || model_uid == 301)
-    {
-        params[0] *= 1000;	//km -> m
-        params[3] *= .001;	//mm -> m
-        params[4] *= .001;	//mm -> m
-    }
-    else if (model_uid == 2000)
-    {
-        params[0] *= 1000;	//km -> m
-        params[3] *= .001;	//mm -> m
-        params[4] *= .001;	//mm -> m
     }
 }
 
