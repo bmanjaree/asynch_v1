@@ -693,84 +693,14 @@ int ReadInitData(
         //For model_uid 21, just set the state
        // return LinearHillslope_Evap_Check(y_0, params, global_params, qvs, 0);
     }
-    else if (model_uid == 30)
-    {
-        //y_i has q (y_i[0]), s_p (y_i[1]), h_w (y_i[2]), theta (y_i[3])
-        //Order of parameters: L_h,A_h,A_up,H_b,H_h,max_inf_rate,K_SAT,S_H,n_vh, b, c, d,K_Q,V_T,c_1,c_2,c_3,c_4,c_5,c_6,c_7
-        //The numbering is:     0   1   2    3   4       5         6    7   8    9 10 11  12  13  14  15  16  17  18  19  20
-        //Order of global_params: v_0,lambda_1,lambda_2,Q_r,A_r,K_T,C_r,e_pot
-        //The numbering is:        0      1        2     3   4   5   6   7
-       
-        //double H_h = params[4];
-
-        //params[9] = 1.0;
-        //params[10] = 0.0;
-        //params[11] = 0.0;
-
-        //if(H_h < 1e-12)		//Flat surface
-        //{
-        //y_0[2] = 0.0;
-        //y_0[3] = 0.0;
-        //}
-        
-        //return 0;
-    }
-    else if ((model_uid == 191) || (model_uid == 192))
-    {
-        //For this model_uid, the extra states need to be set (3,4,5)
-        y_0[3] = 0.0;
-        y_0[4] = 0.0;
-        y_0[5] = y_0[0];	//I'm not really sure what to use here...
-    }
     else if (model_uid==193 || model_uid==194)
     {return 0;}
-    else if (model_uid == 195)
-    {
-        //For this model_uid, the extra states need to be set (3)
-        y_0[3] = 0.0;
-    }
-    else if (model_uid == 196)
-    {
-        y_0[3] = 0.0;  // zero precip accumulation
-        y_0[4] = 0.0;  // zero runoff accumulation
-    } 
-    else if (model_uid == 200)
-    {
-	//For model_uid 200, only the discharge has been set. Need to set the storage.
-	//Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
-	//The numbering is:     0   1   2   3   4       5         6    7   8   9   10  11  12    13      14  15  16  17  18  19
-	//Order of global_params: v_0,lambda_1,lambda_2,Q_r,A_r,RC,u_0
-	//The numbering is:        0      1        2     3   4   5  6
-	y_0[1] = params[0] / (global_params[6] + global_params[0]) * y_0[0];
-	return 0;
-    }
-    else if (model_uid == 249)
-    {
-	//For this model_uid, the extra states need to be set (4,5,6)
-	y_0[4] = y_0[0];
-	y_0[5] = y_0[0];
-    }
     else if (model_uid == 254)
     {
 	//For this model_uid, the extra states need to be set (4,5,6)
 	y_0[4] = 0.0;
 	y_0[5] = 0.0;
 	y_0[6] = y_0[0];
-    }
-    else if (model_uid == 254)
-    {
-        //For this model_uid, the extra states need to be set (4,5,6)
-        y_0[4] = 0.0;
-        y_0[5] = 0.0;
-        y_0[6] = y_0[0];
-    }
-    else if (model_uid == 256)
-    {
-        //For this model_uid, the extra states need to be set (4,5,6,7)
-        y_0[4] = 0.0;
-        y_0[5] = 0.0;
-        y_0[6] = 0.0;
-        y_0[7] = y_0[0];
     }
         else if (model_uid == 400)        //tetis
 		{
