@@ -688,12 +688,7 @@ int ReadInitData(
 {
     unsigned int state;
 
-    if (model_uid == 19)
-    {
-        //For model_uid 21, just set the state
-       // return LinearHillslope_Evap_Check(y_0, params, global_params, qvs, 0);
-    }
-    else if (model_uid==193 || model_uid==194)
+    if (model_uid==193 || model_uid==194)
     {return 0;}
     else if (model_uid == 254)
     {
