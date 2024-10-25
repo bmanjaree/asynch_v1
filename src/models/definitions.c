@@ -1751,34 +1751,6 @@ void Precalculations(
 	    vals[10] = vals[6] * vals[7] * exp(10 * vals[7]) - vals[8] * vals[7];	// LinIntercept
     }
 
-   /* else if (model_uid == 654)
-    {
-        //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
-        //The numbering is:     0   1   2    3     4   5   6   7 
-        //Order of global_params: v_0,lambda_1,lambda_2,v_h,k_3,k_I_factor,h_b,S_L,A,B,exponent,v_B
-        //The numbering is:        0      1        2     3   4     5        6   7  8 9    10     11
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double v_h = params[3];
-        double k_i_factor = params[4];
-        double k_3 = params[5];	//[1/min]
-        double h_b = params[6];	//[m]
-        double S_L = params[7];	//[m]
-        double A = params[8];
-        double B = params[9];
-        double exponent = params[10];
-        double lambda_1 = params[11];
-        double lambda_2 = params[12]; 
-        double v_0 = params[13];
-               
-       // vals[3] = v_h * L_i / A_h * 60.0; //Poner en el 3 el nuevo k_2   // [1/min] k_2
-       // vals[4] = vals[3]* k_i_factor;                                  // [1/min] k_i
-       // vals[12] = 60.0*v_0*pow(A_i, lambda_2)/((1.0 - lambda_1)*L_i);//[1/min]  invtau
-       // vals[13] = A_h / 60.0;                                            // c_2
-    }*/
-
     if (model_uid == 250)
     {
         //Order of parameters: A_i,L_i,A_h,h_r,invtau,k_2,k_I,c_1,c_2
@@ -1871,54 +1843,6 @@ void Precalculations(
         vals[14] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
         vals[15] = A_h / 60.0;	//  c_2
     }
-    /*else if (model_uid == 257)
-    {
-        //Order of parameters: A_i,L_i,A_h,horder,invtau,k_2,k_i,c_1,c_2
-        //The numbering is:    0   1   2   3      4      5   6   7...8
-        //Order of global_params: v_0_0,...,v_0_9,lambda_1_0,...,lambda_1_9,lambda_2,v_h,k_3,k_I_factor,h_b,S_L,A ,B, exponent,v_B,k_tl
-        //The numbering is:       0         9     10,            19         20       21  22  23         24  25  26 27 28       29  30
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        int h_order = (int) params[3];
-        assert(h_order < 10);
-
-        double v_0 = global_params[h_order - 1];
-        double lambda_1 = global_params[10 + h_order - 1];
-        double lambda_2 = global_params[20];
-        double v_h = global_params[21];
-        double k_i_factor = global_params[23];
-
-        vals[4] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[5] = v_h * L_i / A_h * 60.0;	//[1/min] k_2
-        vals[6] = vals[5] * k_i_factor;	//[1/min] k_i
-        vals[7] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
-        vals[8] = A_h / 60.0;	//  c_2
-    }
-    else if (model_uid == 258)
-    {
-        //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
-        //The numbering is:	    0   1   2    3     4   5   6   7 
-        //Order of global_params: v_0,lambda_1,lambda_2,v_h,k_3,k_I,h_b,S_L,v_B
-        //The numbering is:        0      1        2     3   4   5   6   7   8
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-
-        double v_0 = global_params[0];
-        double lambda_1 = global_params[1];
-        double lambda_2 = global_params[2];
-        double v_h = global_params[3];
-        double k_i_factor = global_params[5];
-
-        vals[3] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	// [1/min]  invtau
-        vals[4] = v_h * L_i / A_h * 60.0;                               // [1/min] k_2
-        vals[5] = vals[4] * k_i_factor;	                                // [1/min] k_i
-        vals[6] = (0.001 / 60.0);                                       // (mm/hr->m/min)  c_1
-        vals[7] = A_h / 60.0;                                           // c_2
-    }*/
     else if (model_uid == 259)
     {
         //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
@@ -1961,49 +1885,6 @@ void Precalculations(
         vals[4] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
         vals[5] = A_h / 60.0;	//  c_2
     }
-    /*else if (model_uid == 261)
-    {
-        //Order of parameters: A_i,L_i,A_h,S_h,T_L,h_b,k_D,k_dry,k_i | invtau,c_1,c_2,c_3
-        //The numbering is:	0   1   2   3   4   5   6   7     8  |   9     10  11  12
-        //Order of global_params: v_0,lambda_1,lambda_2,N,phi,v_B
-        //The numbering is:        0      1        2    3  4   5 
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double S_h = params[3];
-
-        double v_0 = global_params[0];
-        double lambda_1 = global_params[1];
-        double lambda_2 = global_params[2];
-
-        vals[9] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[10] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
-        vals[11] = A_h / 60.0;	//  c_2
-        vals[12] = pow(S_h, 0.5)*L_i / A_h;	//c_3
-    }
-    else if (model_uid == 262)
-    {
-        //Order of parameters: A_i,L_i,A_h,S_h,T_L,eta,h_b,k_D,k_dry,k_i | invtau,c_1,c_2,k_2
-        //The numbering is:	0   1   2   3   4   5   6   7   8     9  |   10    11  12  13
-        //Order of global_params: v_0,lambda_1,lambda_2,N,phi,v_B
-        //The numbering is:        0      1        2    3  4   5
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double S_h = params[3];
-        double eta = params[5];
-
-        double v_0 = global_params[0];
-        double lambda_1 = global_params[1];
-        double lambda_2 = global_params[2];
-
-        vals[10] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[11] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
-        vals[12] = A_h / 60.0;	//  c_2
-        vals[13] = pow(S_h, 0.5)*L_i / (A_h*eta);	//k_2
-    }*/
   else if (model_uid == 263) {
 			double* vals = params;
 			double A_i = params[0];
