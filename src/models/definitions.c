@@ -203,23 +203,8 @@ void SetOutputConstraints(GlobalVars* globals)
     //Set dim and start of differential variables
     switch (model_uid)
     {
-        //--------------------------------------------------------------------------------------------
-        case 196:
-            globals->OutputConstrainsHdf5 = &OutputConstraints_Model196_Hdf5;
-            globals->OutputConstrainsPsql = NULL;
-            globals->OutputConstrainsRec = NULL;
-            break;
         case 254:
             globals->OutputConstrainsHdf5 = &OutputConstraints_Model254_Hdf5;
-            globals->OutputConstrainsPsql = NULL;
-            globals->OutputConstrainsRec = NULL;
-        case 256:
-            globals->OutputConstrainsHdf5 = &OutputConstraints_Model256_Hdf5;
-            globals->OutputConstrainsPsql = NULL;
-            globals->OutputConstrainsRec = NULL;
-            break;
-        case 264:
-            globals->OutputConstrainsHdf5 = &OutputConstraints_Model256_Hdf5;
             globals->OutputConstrainsPsql = NULL;
             globals->OutputConstrainsRec = NULL;
             break;
