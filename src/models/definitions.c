@@ -3458,7 +3458,7 @@ int ReadInitData(
             y_0[i] = 0.0;
 
         return 0;
-    }*/
+    }
     else if (model_uid == 261) {
 		//Discharges are initially read into y_0[1] when no dam is present. So y_0[1] is copied to y_0[0],
 		//then the corresponding storage is moved into y_0[1]. When a dam is present, y_0[1] will have the storage.
@@ -3537,7 +3537,7 @@ int ReadInitData(
 		y_0[6] = 0.0;
 		y_0[7] = y_0[0];
 	}
-	/*else if (model_uid == 300) {
+	else if (model_uid == 300) {
 		
 		 //For this model_uid, all initial conditions for variational equation must be set here.
 		 //Order of parameters: L_i,A_h,A_i,h_b,h_H,max_inf_rate,K_sat,S_h,eta,b_H,c_H,d_H,invtau,epsilon,c_1,c_2,c_3,c_4,c_5,c_6
