@@ -507,30 +507,7 @@ void Precalculations(
     unsigned int model_uid,
     void* external)
 {
-    if (model_uid == 19)
-    {
-        //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
-        //The numbering is:	0   1   2   3  4    5    6   7
-        //Order of global_params: v_r,lambda_1,lambda_2,RC,v_h,v_g,e_pot
-        //The numbering is:        0      1        2     3  4   5   6
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double v_r = global_params[0];
-        double lambda_1 = global_params[1];
-        double lambda_2 = global_params[2];
-        double RC = global_params[3];
-        double v_h = global_params[4];
-        double v_g = global_params[5];
-
-        vals[3] = v_h * L_i / A_h * 60.0;	//[1/min]  k2
-        vals[4] = v_g * L_i / A_h * 60.0;	//[1/min]  k3
-        vals[5] = 60.0*v_r*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	//[1/min]  invtau
-        vals[6] = RC*(0.001 / 60.0);		//(mm/hr->m/min)  c_1
-        vals[7] = (1.0 - RC)*(0.001 / 60.0);	//(mm/hr->m/min)  c_2
-    }
-    else if (model_uid == 193)
+    if (model_uid == 193)
     {
         //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
         //Order of parameters: A_i,L_i,A_h,invtau
