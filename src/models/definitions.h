@@ -49,6 +49,5 @@ int ReadInitData(
 
 
 
-//void AssimError(unsigned int N,UnivVars* GlobalVars,ErrorData* GlobalErrors);
 
 #endif //ASYNCH_MODELS_DEFINITIONS_H
