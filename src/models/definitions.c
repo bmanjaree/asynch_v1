@@ -3051,7 +3051,7 @@ int ReadInitData(
     if (model_uid == 19)
     {
         //For model_uid 21, just set the state
-        return LinearHillslope_Evap_Check(y_0, params, global_params, qvs, 0);
+       // return LinearHillslope_Evap_Check(y_0, params, global_params, qvs, 0);
     }
    /*else if (model_uid == 21)
     {
