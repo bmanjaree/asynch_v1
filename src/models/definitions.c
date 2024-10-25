@@ -1954,7 +1954,7 @@ void InitRoutines(
         link->check_state = &dam_check_qvs;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_qs;
     
-	}*/else if (model_uid == 263) {
+	}else if (model_uid == 263) {
 		link->dim = 8;
 		link->no_ini_start = 4;
 		link->diff_start = 0;
@@ -1995,7 +1995,7 @@ void InitRoutines(
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-    }
+    }*/
 	else if (model_uid == 400) //tetis01
 			{
 		link->dim = 6;
