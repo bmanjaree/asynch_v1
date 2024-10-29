@@ -53,8 +53,6 @@ void TopLayerHillslope_Reservoirs(double t, const double * const y_i, unsigned i
     ans[3] = 0.0;
 }
 
-}
-
 
 //Type 254
 //Contains 3 layers on hillslope: ponded, top layer, soil. Also has 3 extra states: total precip, total runoff, base flow
