@@ -23,6 +23,7 @@
 #endif
 
 #include <mpi.h>
+#include <netcdf.h>  // Include netCDF API header
 
 #if defined(HAVE_POSTGRESQL)
 #include <libpq-fe.h>
@@ -243,7 +244,7 @@ int DumpTimeSerieFile(Link* sys, GlobalVars* globals, unsigned int N, unsigned i
     {
         DumpTimeSerieH5File(sys, globals, N, save_list, save_size, my_save_size, id_to_loc, assignments, additional_temp, additional_out);
     }
-    else if (globals->hydros_loc_flag == 6)	//.h5 array
+    else if (globals->hydros_loc_flag == 6)	//.nc file
     {
         DumpTimeSerieNcFile(sys, globals, N, save_list, save_size, my_save_size, id_to_loc, assignments, additional_temp, additional_out);
     }
@@ -623,7 +624,10 @@ int DumpTimeSerieCsvFile(Link* sys, GlobalVars* globals, unsigned int N, unsigne
 }
 
 
-int DumpTimeSerieH5File(Link* sys, GlobalVars* globals, unsigned int N, unsigned int* save_list, unsigned int save_size, unsigned int my_save_size, const Lookup * const id_to_loc, int* assignments, char* additional_temp, char* additional_out)
+int DumpTimeSerieH5File(Link* sys, GlobalVars* globals, unsigned int N, unsigned int* save_list, 
+                            unsigned int save_size, unsigned int my_save_size, 
+                            const Lookup * const id_to_loc, int* assignments, 
+                            char* additional_temp, char* additional_out)
 {
     unsigned int size = 16;
     char filename[ASYNCH_MAX_PATH_LENGTH], filenamespace[ASYNCH_MAX_PATH_LENGTH], output_filename[ASYNCH_MAX_PATH_LENGTH];
@@ -792,7 +796,7 @@ int DumpTimeSerieH5File(Link* sys, GlobalVars* globals, unsigned int N, unsigned
 
     //Cleanup
     if (inputfile)
-        fclose(inputfile);
+        fclose(inputfile);//!!!
     
     if (my_rank == 0)
     {
@@ -801,6 +805,8 @@ int DumpTimeSerieH5File(Link* sys, GlobalVars* globals, unsigned int N, unsigned
         H5Tclose(compound_id);
     }
 
+    free(data_storage); // Ensure data_storage is freed on all paths !!!
+
     if (my_rank == 0)
         printf("\nResults written to file %s.\n", output_filename);
 
@@ -808,7 +814,482 @@ int DumpTimeSerieH5File(Link* sys, GlobalVars* globals, unsigned int N, unsigned
 }
 
 
-int DumpTimeSerieNcFile(Link* sys, GlobalVars* globals, unsigned int N, unsigned int* save_list, unsigned int save_size, unsigned int my_save_size, const Lookup * const id_to_loc, int* assignments, char* additional_temp, char* additional_out)
+// Example replacement for DumpTimeSerieNcFile using the netCDF API directly
+int DumpTimeSerieNcFile_new(Link* sys, GlobalVars* globals, unsigned int N, unsigned int* save_list, 
+                           unsigned int save_size, unsigned int my_save_size, 
+                           const Lookup * const id_to_loc, int* assignments, 
+                           char* additional_temp, char* additional_out)
+{
+    int retval;
+    int ncid, varid;
+    int link_dimid, time_dimid, output_dimid;
+    int dimids[3];
+    size_t num_link = save_size;
+    size_t num_timestep = (unsigned int)(globals->maxtime / globals->print_time) + 1;
+    size_t num_output = globals->num_outputs;
+
+    // Construct output filename
+    char output_filename[ASYNCH_MAX_PATH_LENGTH];
+    char filenamespace[ASYNCH_MAX_PATH_LENGTH];
+    if (globals->print_par_flag == 1) {
+        if (!additional_out)
+            sprintf(output_filename, "%s", globals->hydros_loc_filename);
+        else
+            sprintf(output_filename, "%s_%s", globals->hydros_loc_filename, additional_out);
+        for (unsigned int i = 0; i < globals->num_global_params; i++) {
+            sprintf(filenamespace, "_%.4e", globals->global_params[i]);
+            strcat(output_filename, filenamespace);
+        }
+        strcat(output_filename, ".nc");
+    } else {
+        if (!additional_out)
+            sprintf(output_filename, "%s.nc", globals->hydros_loc_filename);
+        else
+            sprintf(output_filename, "%s_%s.nc", globals->hydros_loc_filename, additional_out);
+    }
+    if (my_rank == 0) {
+        printf("Process %d: Creating netCDF file %s\n", my_rank, output_filename);
+    }
+
+    /* Create the netCDF file. Here we use NC_CLOBBER (to overwrite any existing file)
+       and NC_NETCDF4 to enable netCDF-4 features if desired. */
+    if ((retval = nc_create(output_filename, NC_CLOBBER | NC_NETCDF4, &ncid))) {
+        if (my_rank == 0)
+            printf("Error: Process %d failed to create netCDF file %s: %s\n", my_rank, output_filename, nc_strerror(retval));
+        return 2;
+    }
+
+    /* Define dimensions */
+    if ((retval = nc_def_dim(ncid, "link", num_link, &link_dimid))) {
+        printf("Error: Process %d failed to define dimension 'link': %s\n", my_rank, nc_strerror(retval));
+        nc_close(ncid);
+        return 2;
+    }
+    if ((retval = nc_def_dim(ncid, "time", num_timestep, &time_dimid))) {
+        printf("Error: Process %d failed to define dimension 'time': %s\n", my_rank, nc_strerror(retval));
+        nc_close(ncid);
+        return 2;
+    }
+    if ((retval = nc_def_dim(ncid, "output", num_output, &output_dimid))) {
+        printf("Error: Process %d failed to define dimension 'output': %s\n", my_rank, nc_strerror(retval));
+        nc_close(ncid);
+        return 2;
+    }
+    dimids[0] = link_dimid;
+    dimids[1] = time_dimid;
+    dimids[2] = output_dimid;
+
+    /* Define the 3D variable 'outputs' with dimensions (link, time, output) */
+    if ((retval = nc_def_var(ncid, "outputs", NC_FLOAT, 3, dimids, &varid))) {
+        printf("Error: Process %d failed to define variable 'outputs': %s\n", my_rank, nc_strerror(retval));
+        nc_close(ncid);
+        return 2;
+    }
+
+    /* Add some global attributes */
+    if ((retval = nc_put_att_text(ncid, NC_GLOBAL, "version", strlen(PACKAGE_VERSION), PACKAGE_VERSION))) {
+        printf("Warning: Process %d failed to put attribute 'version': %s\n", my_rank, nc_strerror(retval));
+    }
+    {
+        char model_str[16];
+        sprintf(model_str, "%hu", globals->model_uid);
+        if ((retval = nc_put_att_text(ncid, NC_GLOBAL, "model", strlen(model_str), model_str))) {
+            printf("Warning: Process %d failed to put attribute 'model': %s\n", my_rank, nc_strerror(retval));
+        }
+    }
+    {
+        char issue_time_str[16];
+        sprintf(issue_time_str, "%u", (unsigned int)globals->begin_time);
+        if ((retval = nc_put_att_text(ncid, NC_GLOBAL, "issue_time", strlen(issue_time_str), issue_time_str))) {
+            printf("Warning: Process %d failed to put attribute 'issue_time': %s\n", my_rank, nc_strerror(retval));
+        }
+    }
+
+    /* End define mode */
+    if ((retval = nc_enddef(ncid))) {
+        printf("Error: Process %d failed to end define mode: %s\n", my_rank, nc_strerror(retval));
+        nc_close(ncid);
+        return 2;
+    }
+
+    /* Open the temporary file containing buffered output data.
+       The file name is built from globals->temp_filename and additional_temp if provided. */
+    char filename[ASYNCH_MAX_PATH_LENGTH];
+    FILE *inputfile = NULL;
+    if (my_save_size) {
+        if (!additional_temp)
+            sprintf(filename, "%s", globals->temp_filename);
+        else
+            sprintf(filename, "%s_%s", globals->temp_filename, additional_temp);
+        if (my_rank == 0) {
+            printf("Process %d: Opening temporary file %s\n", my_rank, filename);
+        }
+        inputfile = fopen(filename, "rb");
+        if (!inputfile) {
+            printf("Error: Process %d could not open temporary file %s\n", my_rank, filename);
+            nc_close(ncid);
+            return 2;
+        }
+    }
+
+    /* Allocate a buffer for reading rows of data.
+       Here we assume each time step (row) consists of 'num_output' float values. */
+    size_t chunk_rows = 512;  /* number of rows per chunk */
+    float *data_buffer = malloc(chunk_rows * num_output * sizeof(float));
+    if (!data_buffer) {
+        printf("Error: Process %d could not allocate data buffer for netCDF writing.\n", my_rank);
+        if (inputfile) fclose(inputfile);
+        nc_close(ncid);
+        return 2;
+    }
+
+    /* Loop over each link (from save_list) to read its data from the temporary file and write to the netCDF variable.
+       The netCDF variable 'outputs' is 3D: [link, time, output]. */
+    for (unsigned int i = 0; i < save_size; i++) {
+        unsigned int loc = find_link_by_idtoloc(save_list[i], id_to_loc, N);
+        int proc = assignments[loc];
+        Link *current = &sys[loc];
+
+        if (proc == my_rank) {
+            unsigned int id, total_spaces;
+            if (fread(&id, sizeof(unsigned int), 1, inputfile) != 1) {
+                printf("Error: Process %d failed to read link id from temporary file for link index %u.\n", my_rank, i);
+                free(data_buffer);
+                if (inputfile) fclose(inputfile);
+                nc_close(ncid);
+                return 2;
+            }
+            if (fread(&total_spaces, sizeof(unsigned int), 1, inputfile) != 1) {
+                printf("Error: Process %d failed to read total_spaces for link id %u.\n", my_rank, id);
+                free(data_buffer);
+                if (inputfile) fclose(inputfile);
+                nc_close(ncid);
+                return 2;
+            }
+            /* Seek until we find the correct link id (if needed) */
+            while (id != save_list[i] && !feof(inputfile)) {
+                long jump_size = (long) total_spaces * (long) (globals->num_outputs * sizeof(float));
+                fseek(inputfile, jump_size, SEEK_CUR);
+                if (fread(&id, sizeof(unsigned int), 1, inputfile) != 1)
+                    break;
+                if (fread(&total_spaces, sizeof(unsigned int), 1, inputfile) != 1)
+                    break;
+            }
+            if (feof(inputfile)) {
+                printf("Error: Process %d could not find link id %u in temporary file %s.\n", my_rank, save_list[i], filename);
+                free(data_buffer);
+                fclose(inputfile);
+                nc_close(ncid);
+                return 2;
+            }
+            if (my_rank == 0) {
+                printf("Process %d: Writing data for link id %u with %u disk_iterations\n", my_rank, save_list[i], current->disk_iterations);
+            }
+
+            /* Write data in chunks (each chunk corresponds to a set of time steps) */
+            size_t remaining = current->disk_iterations;
+            size_t time_index = 0;
+            while (remaining > 0) {
+                size_t rows_to_read = (remaining < chunk_rows) ? remaining : chunk_rows;
+                size_t num_read = fread(data_buffer, sizeof(float), rows_to_read * num_output, inputfile);
+                if (num_read != rows_to_read * num_output) {
+                    printf("Error: Process %d read %zu floats (expected %zu) for link id %u at time_index %zu\n",
+                           my_rank, num_read, rows_to_read * num_output, save_list[i], time_index);
+                    free(data_buffer);
+                    fclose(inputfile);
+                    nc_close(ncid);
+                    return 2;
+                }
+                size_t start_nc[3] = {i, time_index, 0};
+                size_t count_nc[3] = {1, rows_to_read, num_output};
+                if ((retval = nc_put_vara_float(ncid, varid, start_nc, count_nc, data_buffer))) {
+                    printf("Error: Process %d failed to write netCDF data for link id %u at time_index %zu: %s\n",
+                           my_rank, save_list[i], time_index, nc_strerror(retval));
+                    free(data_buffer);
+                    fclose(inputfile);
+                    nc_close(ncid);
+                    return 2;
+                }
+                remaining -= rows_to_read;
+                time_index += rows_to_read;
+            }
+        }
+        else if (my_rank == 0) {
+            /* In a full MPI implementation, process 0 would receive the data from other processes.
+               For brevity, this example only writes data for links where proc == my_rank.
+               You would need to implement MPI_Recv calls here as appropriate. */
+            printf("Process %d: Skipping link id %u because it is assigned to process %d\n", my_rank, save_list[i], proc);
+        }
+    }
+
+    free(data_buffer);
+    if (inputfile)
+        fclose(inputfile);
+    if (my_rank == 0) {
+        if ((retval = nc_close(ncid))) {
+            printf("Error: Process %d failed to close netCDF file %s: %s\n", my_rank, output_filename, nc_strerror(retval));
+            return 2;
+        }
+        printf("Process %d: Successfully closed netCDF file %s\n", my_rank, output_filename);
+    }
+
+    return 0;
+}
+
+
+int DumpTimeSerieNcFile(Link* sys, GlobalVars* globals, unsigned int N, unsigned int* save_list, 
+                          unsigned int save_size, unsigned int my_save_size, 
+                          const Lookup * const id_to_loc, int* assignments, 
+                          char* additional_temp, char* additional_out)
+{
+    unsigned int size = 16;
+    char filename[ASYNCH_MAX_PATH_LENGTH], filenamespace[ASYNCH_MAX_PATH_LENGTH], output_filename[ASYNCH_MAX_PATH_LENGTH];
+    char *data_storage;
+    FILE *inputfile = NULL;
+    hid_t file_id;
+    hid_t dataset_id;
+    hid_t mem_dataspace_id, file_dataspace_id;
+    
+    hsize_t start[3];  // Start of hyperslab
+    hsize_t count[3];  // Block count
+
+    const hsize_t chunk_size = 512; // Chunk size in number of table entries per chunk
+    const int compression = 5;      // Compression level (0-9)
+
+    // Determine the total size of one line in the temporary file
+    unsigned int line_size = CalcTotalOutputSize(globals);
+
+    data_storage = malloc(chunk_size * line_size);
+    if (!data_storage) {
+        printf("Error: could not allocate buffer memory.\n");
+        return 2;
+    }
+
+    // Create output file with .nc extension
+    if (my_rank == 0)
+    {
+        if (globals->print_par_flag == 1)
+        {
+            if (!additional_out)
+                sprintf(output_filename, "%s", globals->hydros_loc_filename);
+            else
+                sprintf(output_filename, "%s_%s", globals->hydros_loc_filename, additional_out);
+            for (unsigned int i = 0; i < globals->num_global_params; i++)
+            {
+                sprintf(filenamespace, "_%.4e", globals->global_params[i]);
+                strcat(output_filename, filenamespace);
+            }
+            // Use .nc extension for netCDF output
+            sprintf(filenamespace, ".nc");
+            strcat(output_filename, filenamespace);
+        }
+        else
+        {
+            if (!additional_out)
+                sprintf(output_filename, "%s.nc", globals->hydros_loc_filename);
+            else
+                sprintf(output_filename, "%s_%s.nc", globals->hydros_loc_filename, additional_out);
+        }
+        
+        // Create file using HDF5 API (netCDF-4 files are built on HDF5)
+        file_id = H5Fcreate(output_filename, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+        if (file_id < 0)
+        {
+            printf("Error: could not open netCDF file %s.\n", output_filename);
+            free(data_storage);
+            return 2;
+        }
+
+        // Set file attributes
+        unsigned short type = globals->model_uid;
+        H5LTset_attribute_string(file_id, "/", "version", PACKAGE_VERSION);
+        H5LTset_attribute_ushort(file_id, "/", "model", &type, 1);
+        H5LTset_attribute_uint(file_id, "/", "issue_time", (unsigned int*)&globals->begin_time, 1);
+
+        // Create dimension scale for link IDs
+        hsize_t num_link = save_size;
+        H5LTmake_dataset_int(file_id, "link_id", 1, &num_link, save_list);
+        hid_t link_id_ds = H5Dopen(file_id, "link_id");
+        H5DSset_scale(link_id_ds, "link_id");
+
+        // Create time axis
+        hsize_t num_timestep = (unsigned int)(globals->maxtime / globals->print_time) + 1;
+        int *time_buffer = malloc(num_timestep * sizeof(int));
+        for (unsigned int i = 0; i < num_timestep; i++)
+            time_buffer[i] = (int)(globals->begin_time + (i * globals->print_time * 60));
+        H5LTmake_dataset_int(file_id, "time", 1, &num_timestep, time_buffer);
+        free(time_buffer);
+        hid_t time_ds = H5Dopen(file_id, "time");
+        H5DSset_scale(time_ds, "time");
+
+        // Create output axis
+        hsize_t num_outputs = globals->num_outputs;
+        int *out_buffer = malloc(num_outputs * sizeof(int));
+        for (unsigned int i = 0; i < num_outputs; i++)
+            out_buffer[i] = i;
+        H5LTmake_dataset_int(file_id, "output", 1, &num_outputs, out_buffer);
+        free(out_buffer);
+        hid_t output_ds = H5Dopen(file_id, "output");
+        H5DSset_scale(output_ds, "output");
+
+        // Create memory dataspace (2D: time x outputs)
+        hsize_t dims[2] = { num_timestep, globals->num_outputs };
+        mem_dataspace_id = H5Screate_simple(2, dims, NULL);
+
+        // Create file dataspace (3D: link x time x outputs)
+        hsize_t dimsf[3] = { save_size, num_timestep, globals->num_outputs };
+        file_dataspace_id = H5Screate_simple(3, dimsf, NULL);
+
+        // Create the dataset in the file
+        dataset_id = H5Dcreate(file_id, "outputs", H5T_NATIVE_FLOAT, file_dataspace_id, H5P_DEFAULT);
+        if (dataset_id < 0)
+        {
+            printf("Error: could not initialize netCDF file %s.\n", output_filename);
+            free(data_storage);
+            return 2;
+        }
+
+        // Attach the dimension scales to the dataset
+        H5DSattach_scale(dataset_id, link_id_ds, 0);
+        H5DSattach_scale(dataset_id, time_ds, 1);
+        H5DSattach_scale(dataset_id, output_ds, 2);
+
+        H5Dclose(link_id_ds);
+        H5Dclose(time_ds);
+        H5Dclose(output_ds);
+    }
+
+    // Open the temporary file that holds the buffer data
+    if (my_save_size)
+    {
+        if (!additional_temp)
+            sprintf(filename, "%s", globals->temp_filename);
+        else
+            sprintf(filename, "%s_%s", globals->temp_filename, additional_temp);
+        inputfile = fopen(filename, "rb");
+        if (!inputfile)
+        {
+            printf("\n[%i]: Error opening inputfile %s.\n", my_rank, filename);
+            free(data_storage);
+            return 2;
+        }
+    }
+
+    // Move data from the temporary file to the final dataset
+    for (unsigned int i = 0; i < save_size; i++)
+    {
+        unsigned int loc = find_link_by_idtoloc(save_list[i], id_to_loc, N);
+        int proc = assignments[loc];
+        Link* current = &sys[loc];
+
+        if (proc == my_rank)
+        {
+            unsigned int counter = 0;
+            unsigned int id, total_spaces;
+            fread(&id, sizeof(unsigned int), 1, inputfile);
+            fread(&total_spaces, sizeof(unsigned int), 1, inputfile);
+            while (id != save_list[i] && !feof(inputfile))
+            {
+                long jump_size = (long)total_spaces * (long)line_size;
+                fseek(inputfile, jump_size, SEEK_CUR);
+                counter++;
+                fread(&id, sizeof(unsigned int), 1, inputfile);
+                fread(&total_spaces, sizeof(unsigned int), 1, inputfile);
+            }
+            if (feof(inputfile))
+            {
+                printf("\n[%i]: Error: could not find id %u in temp file %s.\n", my_rank, save_list[i], filename);
+                free(data_storage);
+                return 2;
+            }
+
+            if (my_rank == 0)
+            {
+                for (size_t k = 0; k < current->disk_iterations; k += chunk_size)
+                {
+                    size_t reminder = ((current->disk_iterations - k) < chunk_size) ? 
+                                        (current->disk_iterations - k) : chunk_size;
+                    size_t num_read = fread(data_storage, line_size, reminder, inputfile);
+                    
+                    start[0] = i;
+                    start[1] = k;
+                    start[2] = 0;
+                    count[0] = 1;
+                    count[1] = num_read;
+                    count[2] = globals->num_outputs;
+                    H5Sselect_hyperslab(file_dataspace_id, H5S_SELECT_SET, start, NULL, count, NULL);
+                    
+                    herr_t ret = H5Dwrite(dataset_id, H5T_NATIVE_FLOAT, mem_dataspace_id, 
+                                           file_dataspace_id, H5P_DEFAULT, data_storage);
+                }
+            }
+            else
+            {
+                MPI_Ssend(&(current->disk_iterations), 1, MPI_UNSIGNED, 0, save_list[i], MPI_COMM_WORLD);
+                for (hsize_t k = 0; k < current->disk_iterations; k += chunk_size)
+                {
+                    size_t reminder = ((current->disk_iterations - k) < chunk_size) ? 
+                                        (current->disk_iterations - k) : chunk_size;
+                    unsigned int num_read = (unsigned int)fread(data_storage, line_size, reminder, inputfile);
+                    MPI_Ssend(&num_read, 1, MPI_UNSIGNED, 0, save_list[i], MPI_COMM_WORLD);
+                    MPI_Ssend(data_storage, num_read * line_size, MPI_CHAR, 0, save_list[i], MPI_COMM_WORLD);
+                }
+            }
+        }
+        else if (my_rank == 0)
+        {
+            MPI_Recv(&(current->disk_iterations), 1, MPI_UNSIGNED, proc, save_list[i], MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            for (hsize_t k = 0; k < current->disk_iterations; k += chunk_size)
+            {
+                unsigned int num_read;
+                MPI_Recv(&num_read, 1, MPI_UNSIGNED, proc, save_list[i], MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(data_storage, num_read * line_size, MPI_CHAR, proc, save_list[i], MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                start[0] = i;
+                start[1] = k;
+                start[2] = 0;
+                count[0] = 1;
+                count[1] = num_read;
+                count[2] = globals->num_outputs;
+                H5Sselect_hyperslab(file_dataspace_id, H5S_SELECT_SET, start, NULL, count, NULL);
+                herr_t ret = H5Dwrite(dataset_id, H5T_NATIVE_FLOAT, mem_dataspace_id, 
+                                       file_dataspace_id, H5P_DEFAULT, data_storage);
+            }
+        }
+    }
+
+    // Close the temporary file and clean up HDF5 objects
+    if (inputfile)
+        fclose(inputfile);
+    if (my_rank == 0)
+    {
+        H5Sclose(file_dataspace_id);
+        H5Sclose(mem_dataspace_id);
+        H5Dclose(dataset_id);
+        H5Fclose(file_id);
+    }
+    free(data_storage);
+
+    // --- Additional conversion stub ---
+    // If you need to convert the buffer file (which was written using HDF5 API)
+    // to a “pure” netCDF file, you could call a conversion routine here.
+    // For example:
+    // if (globals->hydros_loc_flag == 6) {
+    //     int conv_status = ConvertH5BufferToNC(output_filename);
+    //     if (conv_status != 0) {
+    //         printf("Error: failed to convert HDF5 buffer to netCDF format.\n");
+    //         return conv_status;
+    //     }
+    // }
+    // --- End conversion stub ---
+
+    if (my_rank == 0)
+        printf("\nResults written to file %s.\n", output_filename);
+
+    return 0;
+}
+
+
+int DumpTimeSerieNcFile_old(Link* sys, GlobalVars* globals, unsigned int N, unsigned int* save_list, unsigned int save_size, unsigned int my_save_size, const Lookup * const id_to_loc, int* assignments, char* additional_temp, char* additional_out)
 {
     unsigned int size = 16;
     char filename[ASYNCH_MAX_PATH_LENGTH], filenamespace[ASYNCH_MAX_PATH_LENGTH], output_filename[ASYNCH_MAX_PATH_LENGTH];
@@ -1915,6 +2396,7 @@ int DumpStateH5(Link* sys, unsigned int N, int* assignments, GlobalVars* globals
         herr_t ret = H5PTappend(packet_file_id, N, data_storage);
 
         //Clean up
+        free(data_storage);  // Free the allocated memory !!!
         H5PTclose(packet_file_id);
         H5Fclose(file_id);
         H5Tclose(compound_id);
