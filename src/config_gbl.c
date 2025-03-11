@@ -271,6 +271,8 @@ GlobalVars* Read_Global_Data(
         if (globals->init_flag == 1 && !CheckFilenameExtension(globals->init_filename, ".uini")) return NULL;
         if (globals->init_flag == 2 && !CheckFilenameExtension(globals->init_filename, ".rec")) return NULL;
         if (globals->init_flag == 4 && !CheckFilenameExtension(globals->init_filename, ".h5")) return NULL;
+        /// Add .nc extension here !!!
+        if (globals->init_flag == 4 && !CheckFilenameExtension(globals->init_filename, ".h5")) return NULL;
     }
     else if (globals->init_flag == 3)
     {
@@ -297,7 +299,8 @@ GlobalVars* Read_Global_Data(
     }
 
     //Grab the forcing parameters
-    //0 for no rain, 1 for .str file, 2 for regular binary files, 3 for database, 4 for uniform rain (.ustr), 5 for irregular binary files, 6 for gzipped binary files, 7 for monthly recurrent, 8 for grid cell
+    //0 for no rain, 1 for .str file, 2 for regular binary files, 3 for database, 4 for uniform rain (.ustr), 5 for irregular binary files, 6 for gzipped binary files, 7 for monthly recurrent, 8 for grid cell, 11 for netcdf files 
+    // !!! Added netcdf inputs here so that gbl can pass it to pointers
     globals->hydro_table = globals->peak_table = NULL;
     for (i = 0; i < globals->num_forcings; i++)
     {
@@ -305,7 +308,7 @@ GlobalVars* Read_Global_Data(
         valsread = sscanf(line_buffer, "%hi", &(forcings[i].flag));
         if (ReadLineError(valsread, 1, "forcings flag"))	return NULL;
 
-        if (forcings[i].flag == 1 || forcings[i].flag == 2 || forcings[i].flag == 4 || forcings[i].flag == 5 || forcings[i].flag == 6 || forcings[i].flag == 8)
+        if (forcings[i].flag == 1 || forcings[i].flag == 2 || forcings[i].flag == 4 || forcings[i].flag == 5 || forcings[i].flag == 6 || forcings[i].flag == 8 || forcings[i].flag == 11)
         {
             forcings[i].filename = (char*)malloc(ASYNCH_MAX_PATH_LENGTH * sizeof(char));
             valsread = sscanf(line_buffer, "%*i %s", forcings[i].filename);
@@ -313,10 +316,11 @@ GlobalVars* Read_Global_Data(
             if (forcings[i].flag == 1 && !CheckFilenameExtension(forcings[i].filename, ".str"))	return NULL;
             if (forcings[i].flag == 4 && !CheckFilenameExtension(forcings[i].filename, ".ustr")) return NULL;
 
-            if ((forcings[i].flag == 2) || (forcings[i].flag == 5) || (forcings[i].flag == 6))
+            if ((forcings[i].flag == 2) || (forcings[i].flag == 5) || (forcings[i].flag == 6 || (forcings[i].flag == 11)))
             {
                 ReadLineFromTextFile(globalfile, line_buffer, line_buffer_len);
                 valsread = sscanf(line_buffer, "%u %lf %u %u", &(forcings[i].increment), &(forcings[i].file_time), &(forcings[i].first_file), &(forcings[i].last_file));
+                // change to input the time from the data attribute of netcdf file instead of the unixtime in the file name !!!
                 if (ReadLineError(valsread, 4, "time increment, file time, first file, and last file"))	return NULL;
             }
             else if (forcings[i].flag == 8)
@@ -375,6 +379,7 @@ GlobalVars* Read_Global_Data(
             printf("[%i]: Error reading %s: Invalid forcing flag %i.\n", my_rank, globalfilename, forcings[i].flag);
             return NULL;
         }
+        // To this add code for .nc files
     }
 
     //Grab the dam filename
@@ -451,14 +456,14 @@ GlobalVars* Read_Global_Data(
         if (globals->hydros_loc_flag == 2 && !CheckFilenameExtension(globals->hydros_loc_filename, ".csv"))	return NULL;
         if (globals->hydros_loc_flag == 4 && !CheckFilenameExtension(globals->hydros_loc_filename, ".rad"))	return NULL;
         if (globals->hydros_loc_flag == 5 && !CheckFilenameExtension(globals->hydros_loc_filename, ".h5"))	return NULL;
-        if (globals->hydros_loc_flag == 6 && !CheckFilenameExtension(globals->hydros_loc_filename, ".h5"))	return NULL;
+        if (globals->hydros_loc_flag == 6 && !CheckFilenameExtension(globals->hydros_loc_filename, ".nc"))	return NULL;//changed extension for to .nc !!!
         //globals->output_flag = (globals->hydros_loc_flag == 1) ? 0 : 1;
 
         if (globals->hydros_loc_flag == 1)	RemoveSuffix(globals->hydros_loc_filename, ".dat");
         else if (globals->hydros_loc_flag == 2)	RemoveSuffix(globals->hydros_loc_filename, ".csv");
         else if (globals->hydros_loc_flag == 4)	RemoveSuffix(globals->hydros_loc_filename, ".rad");
         else if (globals->hydros_loc_flag == 5)	RemoveSuffix(globals->hydros_loc_filename, ".h5");
-        else if (globals->hydros_loc_flag == 6)	RemoveSuffix(globals->hydros_loc_filename, ".h5");
+        else if (globals->hydros_loc_flag == 6)	RemoveSuffix(globals->hydros_loc_filename, ".nc");//changed extension for to .nc !!!
     }
     else if (globals->hydros_loc_flag == 3)
     {
@@ -595,7 +600,7 @@ GlobalVars* Read_Global_Data(
     valsread = sscanf(line_buffer, "%s", globals->temp_filename);
     if (ReadLineError(valsread, 1, "scratch work folder"))	return NULL;
 
-    if (globals->print_par_flag)	//!!!! Is this needed? Why bother? !!!!
+    if (globals->print_par_flag)	 
     {
         if (AttachParameters(globals->temp_filename, ASYNCH_MAX_PATH_LENGTH, globals->global_params, globals->num_global_params, ASYNCH_MAX_PATH_LENGTH))
         {
