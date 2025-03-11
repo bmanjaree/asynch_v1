@@ -942,7 +942,7 @@ void model404(double t, \
         double c_1 = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
         double A_i = params[0]; //drainage area in km2
 	    double L = params[1];   // Length of the channel [m]
-	    double A_h = params[2]; //Area of the hillslopes [m^2]
+	    double A_h = params[2]; //Area of the hillslopes [m^2] 
         double c_2 = A_h / 60.0;	//  c_2
         double v_0 = params[3];
         double lambda_1 = params[4];
@@ -950,12 +950,12 @@ void model404(double t, \
         double Hu = params[6]/1000; //[m]
         double infiltration = params[7]*c_1; //infiltration rate [m/min]
 		double percolation = params[8]*c_1; // percolation rate to aquifer [m/min]
-        double alfa2 =params[9]; //velocity in m/s
+        double alfa2 =params[9]; //velocity in m/s 
 		double alfa3 = params[10]* 24*60; //residence time [days] to [min].
 		double alfa4 = params[11]* 24*60; //residence time [days] to [min].
 		double melt_factor = params[12] *(1/(24*60.0)) *(1/1000.0); // mm/day/degree to m/min/degree
         double temp_thres= params[13]; // celsius degrees
-        double invtau = 60.0 * v_0 * pow(A_i, lambda_2) / ((1.0 - lambda_1) * L);//[1/min]  invtau params[3]
+        double invtau = 60.0 * v_0 * pow(A_i, lambda_2) / ((1.0 - lambda_1) * L);//[1/min]  invtau params[3] !!!here
 
 
         double x1 =0;
@@ -1031,7 +1031,7 @@ void model404(double t, \
         
         //double alfa2 = (pow(h2,2./3.) * pow(slope,0.5))/manning; //m/s
 
-        double w = alfa2 * L / A_h  * 60; // [1/min]
+        double w = alfa2 * L / A_h  * 60; // [1/min] !!!here
         w = min(1,w); //water can take less than 1 min (dt) to leave surface
         double out2 =0;
         out2  = h2 * w; //direct runoff [m/min]
