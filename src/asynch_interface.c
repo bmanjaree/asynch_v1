@@ -438,9 +438,19 @@ void Asynch_Free(AsynchSolver* asynch)
         ConnData_Free(&asynch->db_connections[i]);
     Destroy_Workspace(&asynch->workspace, asynch->globals->max_rk_stages, asynch->globals->max_parents);
     free(asynch->getting);
-    
-    if (asynch->outputfile)
+    // Old Code:
+    //if (asynch->outputfile)
+    //    fclose(asynch->outputfile);
+    // use‑after‑free (double‑close) errors
+    //the file pointer allocated by fopen is being closed twice !!!
+    // Only close outputfile if it hasn’t been closed already.
+    if (asynch->outputfile != NULL) {
+        printf("Process %i: Warning: Temporary file still open in Asynch_Free; closing now.\n", my_rank);
         fclose(asynch->outputfile);
+        asynch->outputfile = NULL;
+}
+
+
 
     for (i = 0; i < asynch->N; i++)
         Destroy_Link(&asynch->sys[i], asynch->rkdfilename[0] != '\0', asynch->forcings, asynch->globals);
@@ -1074,12 +1084,24 @@ int Asynch_Check_Peakflow_Output(AsynchSolver* asynch, char* name)
 
 int Asynch_Delete_Temporary_Files(AsynchSolver* asynch)
 {
-    if (asynch->outputfile)
+    if (asynch->outputfile != NULL) {
+        printf("Process %i: Closing temporary file in Asynch_Delete_Temporary_Files.\n", my_rank);
         fclose(asynch->outputfile);
+        asynch->outputfile = NULL;  // Prevent further use
+    }
 
-    int ret_val = RemoveTemporaryFiles(asynch->globals, asynch->my_save_size, NULL);
+    //Old Code
+    //int ret_val = RemoveTemporaryFiles(asynch->globals, asynch->my_save_size, NULL);
     //if(ret_val == 1)	printf("[%i]: Error deleting temp file. File does not exist.\n");
-    if (ret_val != 0)	printf("[%i]: Error [%i] while deleting temp file.\n", my_rank, ret_val);
+    //if (ret_val != 0)	printf("[%i]: Error [%i] while deleting temp file.\n", my_rank, ret_val);
+    
+
+    //Trying to remove invalid errors from Valgrind !!!
+    // Remove the temporary file(s) from disk.
+    int ret_val = RemoveTemporaryFiles(asynch->globals, asynch->my_save_size, NULL);
+    if (ret_val != 0)
+        printf("[%i]: Error [%i] while deleting temp file.\n", my_rank, ret_val);
+    
     return ret_val;
 }
 
