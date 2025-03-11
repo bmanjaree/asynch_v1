@@ -151,7 +151,7 @@ void CheckConsistency_Nonzero_AllStates_q(
     if (y[0] < 1e-14) 
         y[0] = 1e-14;
     for (unsigned int i = 1; i < num_dof; i++)
-        if (y[i] < 0.0)
+        if (y[i] < 0.0)//causing issues !!!
             y[i] = 0.0;
 }
 
