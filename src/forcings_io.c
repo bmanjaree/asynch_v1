@@ -295,16 +295,29 @@ int Create_Rain_Data_Par_IBin(
         }
 
         // free memory of "(...)_set" variables
-        for (k = 0; k < numfiles; k++) {
-            free(ibin_link_id_set[k]);
-            free(ibin_rain_intens_set[k]);
-        }
+        //for (k = 0; k < numfiles; k++) {
+        //    free(ibin_link_id_set[k]);
+        //    free(ibin_rain_intens_set[k]);
+        //}
         
+        //if (numfiles > 0) {
+        //    free(ibin_link_id_set);
+        //    free(ibin_rain_intens_set);
+        //    free(timestamp_set);
+        //}
+        // New code:
         if (numfiles > 0) {
-            free(ibin_link_id_set);
-            free(ibin_rain_intens_set);
-            free(timestamp_set);
+        for (k = 0; k < numfiles; k++) {
+            //Following two lines running might be givign segmentation faults
+            if (ibin_link_id_set[k]) free(ibin_link_id_set[k]);  // Free allocated memory
+            if (ibin_rain_intens_set[k]) free(ibin_rain_intens_set[k]);  //  Free allocated memory
         }
+        free(ibin_link_id_set);
+        free(ibin_rain_intens_set);
+        free(entry_count_set);
+        free(timestamp_set);
+}
+
     }
     else
     {
@@ -424,6 +437,15 @@ int Create_Rain_Data_Par_IBin(
         }
     }
 
+    // Free dynamically allocated buffers !!!
+    if (total_entry_counts > 0) {
+        free(ibin_link_id);
+        free(ibin_rain_intens);
+        free(timestamps);
+    }
+
+    free(total_times);// !!!
+ 
     return 0;
 }
 
