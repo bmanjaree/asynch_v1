@@ -24,6 +24,7 @@
 
 #include "asynch_interface.h"
 #include "optparse.h"
+#include <signal.h>
 
 // Global variables
 int my_rank = 0;
@@ -178,9 +179,20 @@ int main(int argc, char* argv[])
         //"Attach to Process" and you can attach to all the different threads in your program.
         if (my_rank == 0)
         {
-            printf("You may now attach the debugger then press enter.\n");
-            //fflush(stdout);
+            //Old Code:
+            //printf("You may now attach the debugger then press enter.\n");
+            ////fflush(stdout);
+            //getchar();
+            //New Code: !!!
+            fprintf(stderr, "Rank 0: Waiting for debugger attach. PID=%d\n", getpid());
+            /* Pause execution until a debugger attaches
+            Once you attach with 'gdb -p <PID>' in another terminal, you cn continue execution with the 
+            'continue' command in gdb. Alternatively, you can also press enter after after attaching if 
+            you keep the getchar() as done below */
+            raise(SIGSTOP);
+            printf("Debugger attached. Press enter to continue...\n");
             getchar();
+
         }
 
         MPI_Barrier(MPI_COMM_WORLD); // All threads will wait here until you give thread 0 an input
