@@ -31,3 +31,5 @@ examples
 *.dbc
 *.str
 *.rvr
+*.pea
+*.log
