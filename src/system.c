@@ -74,6 +74,9 @@ void Destroy_Link(Link* link, int rkd_flag, Forcing* forcings, GlobalVars* globa
             free(link->Z_i);
         }
 #endif
+        // Here's the fix: free the LinkData structure itself.!!!
+        free(link->my);
+        link->my = NULL;
         /*
                 if(global->template_flag && link->equations != NULL)
                 {
@@ -198,13 +201,15 @@ void Destroy_RKMethod(RKMethod* method)
 }
 
 //Frees an ErrorData
+// Freeing the block that was allocated instead of the address !!!
 void Destroy_ErrorData(ErrorData* error)
 {
     assert(error != NULL);
-    free(&error->abstol);
-    free(&error->reltol);
-    free(&error->abstol_dense);
-    free(&error->reltol_dense);
+    free(error->abstol);
+    free(error->reltol);
+    free(error->abstol_dense);
+    free(error->reltol_dense);
+    free(error);  // Free the ErrorData structure itself !!!
 }
 
 //Allocates workspace for RK solvers
@@ -225,7 +230,10 @@ void Create_Workspace(Workspace *workspace, unsigned int max_dim, unsigned short
     //for (unsigned int i = 0; i < num_stages; i++)
     //    workspace->temp_k[i] = v_init(dim);
 
-    workspace->temp_k = malloc(num_stages * max_dim * sizeof(double));
+    // workspace->temp_k = malloc(num_stages * max_dim * sizeof(double));
+    // New code using calloc!!!
+    workspace->temp_k = calloc(num_stages * max_dim, sizeof(double));
+
 
     for (unsigned int i = 0; i < num_stages; i++)
         workspace->temp_k_slices[i] = workspace->temp_k + i * max_dim;
@@ -262,6 +270,7 @@ void Destroy_Workspace(Workspace* workspace, unsigned short int num_stages, unsi
     //    v_free(&workspace->temp_k[i]);
     free(workspace->temp_k);
     
+/* Old Code:
 #if defined(ASYNCH_HAVE_IMPLICIT_SOLVER)
     free(workspace->ipiv);
     v_free(&workspace->rhs);
@@ -271,7 +280,19 @@ void Destroy_Workspace(Workspace* workspace, unsigned short int num_stages, unsi
         v_free(&workspace->Z_i[i]);
     free(workspace->Z_i);
     v_free(&workspace->err);
+#endif // defined(ASYNCH_HAVE_IMPLICIT_SOLVER)*/
+
+#if defined(ASYNCH_HAVE_IMPLICIT_SOLVER)
+    unsigned int i; // Declare loop variable for cleanup
+    free(workspace->ipiv);
+    v_free(&workspace->rhs);
+    m_free(&workspace->JMatrix);
+    for (i = 0; i < s; i++)
+        v_free(&workspace->Z_i[i]);
+    free(workspace->Z_i);
+    v_free(&workspace->err);
 #endif // defined(ASYNCH_HAVE_IMPLICIT_SOLVER)
+
 }
 
 
@@ -323,6 +344,10 @@ void Destroy_UnivVars(GlobalVars* global)
         free(global->dump_table);
     if (global->dump_loc_filename)
         free(global->dump_loc_filename);
+    // Add this line to free global_params !!!
+    if (global->global_params)
+        free(global->global_params);
+    //Old Code
     //if (global->global_params)
     //    free(&global->global_params);
     if (global->print_indices)
