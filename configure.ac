@@ -28,6 +28,8 @@ AC_DEFINE([PQ_VERSION], ["Not specified"], [TODO])
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.8], [found_libcheck=1], [found_libcheck=0])
 PKG_CHECK_MODULES([METIS], [metis >= 5.0.0], [found_metis=1], [found_metis=0])
 PKG_CHECK_MODULES([PETSC], [PETSc >= 3.7.0], [found_petsc=1], [found_petsc=0])
+PKG_CHECK_MODULES([NETCDF], [netcdf >= 4.0.0], [found_netcdf=1], [found_netcdf=0])
+
 
 # Define automake conditionals
 AM_CONDITIONAL([USE_POSTGRESQL], [test "$found_postgresql" = "yes"])
