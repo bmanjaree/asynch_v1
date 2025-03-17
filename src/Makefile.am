@@ -70,8 +70,8 @@ libasynch_a_SOURCES = \
 
 bin_PROGRAMS = asynch
 asynch_SOURCES = optparse.c optparse.h asynch_cli.c
-asynch_LDADD = libasynch.a $(HDF5_LIBS) $(POSTGRESQL_LIBS) $(METIS_LIBS)
-asynch_LDFLAGS = $(HDF5_LDFLAGS) $(POSTGRESQL_LDFLAGS) $(METIS_LDFLAGS)
+asynch_LDADD = libasynch.a $(HDF5_LIBS) $(POSTGRESQL_LIBS) $(METIS_LIBS) -lnetcdf
+asynch_LDFLAGS = $(HDF5_LDFLAGS) $(POSTGRESQL_LDFLAGS) $(METIS_LDFLAGS) 
 
 # If PETSc is available, add the assim source files to asynch an build the assim CLI
 if USE_PETSC
