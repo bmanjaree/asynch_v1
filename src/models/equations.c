@@ -1,21 +1,22 @@
+/******************************************************************************************************
+ * Includes
+ ******************************************************************************************************/
 #if !defined(_MSC_VER)
 #include <config.h>
 #else 
 #include <config_msvc.h>
 #endif
-
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
-
 #include <minmax.h>
 #include <models/equations.h>
 
-
+/******************************************************************************************************
+ * Descriptions of  different variables in the models (remove later?)
+ ******************************************************************************************************/
 //extern int flaggy;
-
 //These are the right-hand side functions for the ODEs. For each of these functions:
 //double t: The current time
 //double *y_i: The approximate value of the solution to the ODEs at the current link at time t
@@ -26,12 +27,179 @@
 //double *params: The parameters for link i
 //int state: The current state of the system
 //double *ans (set by method, assumed that space is allocated): The value returned by the right-hand side function
+// double sq(double x) { return x * x; } #why is this here?
+
+/******************************************************************************************************
+ * Model 100s Routing only models
+ ******************************************************************************************************/
+
+//Type 100
+//Non-linear routing equation with two parameter velocity equation globally
+//Order of parameters: A_i, L_i, A_h, invtau
+//The numbering is:	0   1   2   3
+//Order of global_params: v_0,lambda_1 
+//The numbering is:        0      1
+void routing_100(double t, \
+    const double * const y_i, \
+    unsigned int dim, \
+    const double * const y_p, \
+    unsigned short num_parents, \
+    unsigned int max_dim, \
+    const double * const global_params, \
+    const double * const params, \
+    const double * const forcing_values, \
+    const QVSData * const qvs, \
+    int state, \
+    void* user, \
+    double *ans)
+{
+    unsigned short i;
+
+    // Spatially variant parameters
+	double L_i = params[1]; //Length of stream km -> m converted in definitions.c
+	double A_h = params[2]; //hillslope area km2 -> m2 converted in definitions.c
+    double invtau = params[3]; // 60.0*v_0 / ((1.0 - lambda_1)*L_i) [1/min]  invtau
+
+    // Global Parameters
+    double lambda_1 = global_params[1]; //discharge exponent
+    
+    //Discharge and Runoff forcing
+    double q = y_i[0];		                                        // [m^3/s]
+    double runoff = forcing_values[0]*(0.001 / 60.0);               //(mm/hr ->m/min)
+
+    //Nonlinear routing equation
+    ans[0] = -q + (runoff * A_h / 60.0); //m3/min to m3/s
+    for (i = 0; i<num_parents; i++)
+        ans[0] += y_p[i * dim];
+    ans[0] = invtau * pow(q, lambda_1) * ans[0];
+}
+
+//Type 101
+//Non-linear routing equation with two parameter velocity equation spatially variant
+//Order of parameters: A_i, L_i, A_h, v_0, lambda_1, invtau
+//The numbering is:	0   1   2   3   4   5
+void routing_101(double t, \
+    const double * const y_i, \
+    unsigned int dim, \
+    const double * const y_p, \
+    unsigned short num_parents, \
+    unsigned int max_dim, \
+    const double * const global_params, \
+    const double * const params, \
+    const double * const forcing_values, \
+    const QVSData * const qvs, \
+    int state, \
+    void* user, \
+    double *ans)
+{
+    unsigned short i;
+
+    // Spatially variant parameters
+	double L_i = params[1]; //Length of stream km -> m converted in definitions.c
+	double A_h = params[2]; //hillslope area km2 -> m2 converted in definitions.c
+    double lambda_1 = params[4]; //discharge exponent
+    double invtau = params[5]; // 60.0*v_0 / ((1.0 - lambda_1)*L_i) [1/min]  invtau
+
+    //Discharge and Runoff forcing
+    double q = y_i[0];		                                        // [m^3/s]
+    double runoff = forcing_values[0]*(0.001 / 60.0);               //(mm/hr ->m/min)
+
+    //Nonlinear routing equation
+    ans[0] = -q + (runoff * A_h / 60.0); //m3/min to m3/s
+    for (i = 0; i<num_parents; i++)
+        ans[0] += y_p[i * dim];
+    ans[0] = invtau * pow(q, lambda_1) * ans[0];
+}
+
+
+//Type 102
+//Non-linear routing equation with three drainage area dependent parameter velocity equation globally
+//Order of parameters: A_i,L_i,A_h,invtua
+//The numbering is:	0   1   2   3
+//Order of global_params: v_r,lambda_1,lambda_2
+//The numbering is:        0      1        2
+void routing_102(double t, \
+    const double * const y_i, \
+    unsigned int dim, \
+    const double * const y_p, \
+    unsigned short num_parents, \
+    unsigned int max_dim, \
+    const double * const global_params, \
+    const double * const params, \
+    const double * const forcing_values, \
+    const QVSData * const qvs, \
+    int state, \
+    void* user, \
+    double *ans)
+{
+    unsigned short i;
+
+    // Spatially variant parameters
+	double L_i = params[1]; //Length of stream km -> m converted in definitions.c
+	double A_h = params[2]; //hillslope area km2 -> m2 converted in definitions.c
+    double invtau = params[3]; // 60.0*v_0*pow(A_i,lambda_2) / ((1.0 - lambda_1)*L_i) [1/min]  invtau
+
+    // Global Parameters
+    double lambda_1 = global_params[1]; //discharge exponent
+    
+    //Discharge and Runoff forcing
+    double q = y_i[0];		                                        // [m^3/s]
+    double runoff = forcing_values[0]*(0.001 / 60.0);               //(mm/hr ->m/min)
+
+    //Nonlinear routing equation
+    ans[0] = -q + (runoff * A_h / 60.0); //m3/min to m3/s
+    for (i = 0; i<num_parents; i++)
+        ans[0] += y_p[i * dim];
+    ans[0] = invtau * pow(q, lambda_1) * ans[0];
+}
+
+//Type 103
+//Non-linear routing equation with three drainage area dependent parameter velocity equation spatially variant
+//Order of parameters: A_i,L_i,A_h,v_0,lambda_1,lambda_2,invtua
+//The numbering is:	0   1   2   3   4   5   6
+void routing_103(double t, \
+    const double * const y_i, \
+    unsigned int dim, \
+    const double * const y_p, \
+    unsigned short num_parents, \
+    unsigned int max_dim, \
+    const double * const global_params, \
+    const double * const params, \
+    const double * const forcing_values, \
+    const QVSData * const qvs, \
+    int state, \
+    void* user, \
+    double *ans)
+{
+    unsigned short i;
+
+    // Spatially variant parameters
+	double L_i = params[1]; //Length of stream km -> m converted in definitions.c
+	double A_h = params[2]; //hillslope area km2 -> m2 converted in definitions.c
+    double lambda_1 = params[4]; //discharge exponent
+    double invtau = params[6]; // 60.0*v_0 / ((1.0 - lambda_1)*L_i) [1/min]  invtau
+    
+    //Discharge and Runoff forcing
+    double q = y_i[0];		                                        // [m^3/s]
+    double runoff = forcing_values[0]*(0.001 / 60.0);               //(mm/hr ->m/min)
+
+    //Nonlinear routing equation
+    ans[0] = -q + (runoff * A_h / 60.0); //m3/min to m3/s
+    for (i = 0; i<num_parents; i++)
+        ans[0] += y_p[i * dim];
+    ans[0] = invtau * pow(q, lambda_1) * ans[0];
+}
+
+
+/******************************************************************************************************
+ * Model 200s Now changed to runoff only models
+ ******************************************************************************************************/
 
 
 
-double sq(double x) { return x * x; }
-
-
+/******************************************************************************************************
+ * Model 400s Original Combined TETIS Runoff Routing models
+ ******************************************************************************************************/
 //Type 253 , 255,256
 //Contains 3 layers on hillslope: ponded, top layer, soil
 //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
@@ -53,92 +221,6 @@ void TopLayerHillslope_Reservoirs(double t, const double * const y_i, unsigned i
     ans[3] = 0.0;
 }
 
-
-//Type 254
-//Contains 3 layers on hillslope: ponded, top layer, soil. Also has 3 extra states: total precip, total runoff, base flow
-//Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
-//The numbering is:	0   1   2     3    4   5   6   7
-//Order of global_params: v_0,lambda_1,lambda_2,v_h,k_3,k_I_factor,h_b,S_L,A,B,exponent,v_B
-//The numbering is:        0      1        2     3   4     5        6   7  8 9  10       11
-void model254(double t, const double * const y_i, unsigned int dim, const double * const y_p, unsigned short num_parents, unsigned int max_dim, const double * const global_params, const double * const params, const double * const forcing_values, const QVSData * const qvs, int state, void* user, double *ans)
-{
-    unsigned short i;
-
-    double lambda_1 = global_params[1];
-    double k_3 = global_params[4];	//[1/min]
-    double h_b = global_params[6];	//[m]
-    double S_L = global_params[7];	//[m]
-    double A = global_params[8];
-    double B = global_params[9];
-    double exponent = global_params[10];
-    double v_B = global_params[11];
-    double e_pot = forcing_values[1] * (1e-3 / (30.0*24.0*60.0));	//[mm/month] -> [m/min]
-
-    double L = params[1];	//[m]
-    double A_h = params[2];	//[m^2]
-                                //double h_r = params[3];	//[m]
-    double invtau = params[3];	//[1/min]
-    double k_2 = params[4];	//[1/min]
-    double k_i = params[5];	//[1/min]
-    double c_1 = params[6];
-    double c_2 = params[7];
-
-    double q =   y_i[0];		//[m^3/s]
-    double s_p = y_i[1];	//[m]
-    double s_t = y_i[2];	//[m]
-    double s_s = y_i[3];	//[m]
-                            //double s_precip = y_i[4];	//[m]
-                            //double V_r = y_i[5];	//[m^3]
-    double q_b = max(0.001,y_i[6]);	//[m^3/s]
-
-                            //Evaporation
-    double e_p, e_t, e_s;
-    double Corr = s_p + s_t / S_L + s_s / (h_b - S_L);
-    if (e_pot > 0.0 && Corr > 1e-12)
-    {
-        e_p = s_p * e_pot / Corr;
-        e_t = s_t / S_L * e_pot / Corr;
-        e_s = s_s / (h_b - S_L) * e_pot / Corr;
-    }
-    else
-    {
-        e_p = 0.0;
-        e_t = 0.0;
-        e_s = 0.0;
-    }
-
-    double pow_term = (1.0 - s_t / S_L > 0.0) ? pow(1.0 - s_t / S_L, exponent) : 0.0;
-    double k_t = (A + B * pow_term) * k_2;
-
-    //Fluxes
-    double q_pl = k_2 * s_p;
-    double q_pt = k_t * s_p;
-    double q_ts = k_i * s_t;
-    double q_sl = k_3 * s_s;	//[m/min]
-
-                                //Discharge
-    ans[0] = -q + (q_pl + q_sl) * c_2;
-    for (i = 0; i<num_parents; i++)
-        ans[0] += y_p[i * dim];
-    ans[0] = invtau * pow(q, lambda_1) * ans[0];
-
-    //Hillslope
-    ans[1] = forcing_values[0] * c_1 - q_pl - q_pt - e_p;
-    ans[2] = q_pt - q_ts - e_t;
-    ans[3] = q_ts - q_sl - e_s;
-
-    //Additional states
-
-    ans[4] = forcing_values[0] * c_1;
-    ans[5] = q_pl;
-
-
-    ans[6] = q_sl * A_h - q_b*60.0;
-    for (i = 0; i<num_parents; i++)
-        ans[6] += y_p[i * dim + 6] * 60.0;
-    //ans[6] += k_3*y_p[i].ve[3]*A_h;
-    ans[6] *= v_B / L;
-}
 
 //Type 400
 //Tetis model structure for runoff generation + normal routing (NO stream order based velocity)
@@ -1432,114 +1514,5 @@ void model405(double t, \
         //     MPI_Abort(MPI_COMM_WORLD, 1);
         // }
     }
-}
-
-
-//Type 193
-//Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
-//The numbering is:	0   1   2   3  4    5    6   7
-//Order of global_params: v_r,lambda_1,lambda_2,RC,v_h,v_g
-//The numbering is:        0      1        2     3  4   5
-void routing_runoff2(double t, const double * const y_i, unsigned int dim, const double * const y_p, unsigned short num_parents, unsigned int max_dim, const double * const global_params, const double * const params, const double * const forcing_values, const QVSData * const qvs, int state, void* user, double *ans)
-{
-    unsigned short i;
-
-    double lambda_1 = global_params[1];
-
-	double A_i = params[0];
-	double L_i = params[1];
-	double A_h = params[2];
-	double invtau = params[3];
-	//printf("invtau: %f\n", invtau);
-    double q = y_i[0];		                                        // [m^3/s]
-
-    double runoff = forcing_values[0]*(0.001 / 60.0);               //(mm/hr ->m/min)
-
-
-    //in this model, all the water is routed downstream
-    ans[0] = -q + (runoff * A_h / 60.0); //m3/min to m3/s
-    for (i = 0; i<num_parents; i++)
-        ans[0] += y_p[i * dim];
-    
-	
-    //Hillslope
-    //ans[1] = q_rp - q_pl;
-
-    //Sub-surface
-   // ans[2] = q_ra - q_al - e_a;
-
-    //Accumulated precip
-    //ans[3] = q_rp + q_ra;
-
-
-}
-
-//Type 194
-//Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
-//The numbering is:	0   1   2   3  4    5    6   7
-//Order of global_params: v_r,lambda_1,lambda_2,RC,v_h,v_g
-//The numbering is:        0      1        2     3  4   5
-void routing_runoff1(double t, const double * const y_i, unsigned int dim, const double * const y_p, unsigned short num_parents, unsigned int max_dim, const double * const global_params, const double * const params, const double * const forcing_values, const QVSData * const qvs, int state, void* user, double *ans)
-{
-    unsigned short i;
-
-    double lambda_1 = global_params[1];
-
-	double A_i = params[0];
-	double L_i = params[1];
-	double A_h = params[2];
-	double invtau = params[3];
-	//printf("invtau: %f\n", invtau);
-    double q = y_i[0];		                                        // [m^3/s]
-
-    double runoff = forcing_values[0]*(0.001 / 60.0);               //(mm/hr ->m/min)
-
-
-
-    ans[0] = -q + (runoff * A_h / 60.0); //m3/min to m3/s
-    for (i = 0; i<num_parents; i++)
-        ans[0] += y_p[i * dim];
-    ans[0] = invtau * pow(q, lambda_1) * ans[0];
-	
-    //Hillslope
-    //ans[1] = q_rp - q_pl;
-
-    //Sub-surface
-   // ans[2] = q_ra - q_al - e_a;
-
-    //Accumulated precip
-    //ans[3] = q_rp + q_ra;
-
-
-}
-
-
-
-
-//Type 100
-//Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
-//The numbering is:	0   1   2   3  4    5    6   7
-//Order of global_params: v_r,lambda_1,lambda_2,RC,v_h,v_g
-//The numbering is:        0      1        2     3  4   5
-void routing_runoff_nonlinear(double t, const double * const y_i, unsigned int dim, const double * const y_p, unsigned short num_parents, unsigned int max_dim, const double * const global_params, const double * const params, const double * const forcing_values, const QVSData * const qvs, int state, void* user, double *ans)
-{
-    unsigned short i;
-    // Add nonlinear equation
-    double lambda_1 = params[0];
-	double L_i = params[1];
-	double A_h = params[2];
-    
-    double q = y_i[0];		                                        // [m^3/s]
-
-    double runoff = forcing_values[0]*(0.001 / 60.0);               //(mm/hr ->m/min)
-
-
-
-    ans[0] = -q + (runoff * A_h / 60.0); //m3/min to m3/s
-    for (i = 0; i<num_parents; i++)
-        ans[0] += y_p[i * dim];
-    ans[0] = invtau * pow(q, lambda_1) * ans[0];
-	
-
 }
 

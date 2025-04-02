@@ -38,7 +38,7 @@ void SetParamSizes(GlobalVars* globals, void* external) {
     //Set dim and start of differential variables
     switch (model_uid)
     {
-        //--------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------
     case 0:	num_global_params = 6;
         globals->uses_dam = 0;
         globals->num_params = 20;
@@ -50,8 +50,12 @@ void SetParamSizes(GlobalVars* globals, void* external) {
         globals->num_forcings = 0;
         globals->min_error_tolerances = 1;
         break;
-	case 193:
-		num_global_params = 0;
+	/******************************************************************************************************
+	 * Model 100s Routing only models
+	 ******************************************************************************************************/
+	//--------------------------------------------------------------------------------------------
+	case 100:
+		num_global_params = 2;
 		globals->uses_dam = 0;
 		globals->num_params = 4;
 		globals->dam_params_size = 0;
@@ -63,7 +67,20 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 		globals->min_error_tolerances = 1;
 	break;
 	//--------------------------------------------------------------------------------------------
-	case 194:
+	case 101:
+		num_global_params = 1; //none
+		globals->uses_dam = 0;
+		globals->num_params = 6;
+		globals->dam_params_size = 0;
+		globals->area_idx = 0;
+		globals->areah_idx = 2;
+		globals->num_disk_params = 5;
+		globals->convertarea_flag = 0;
+		globals->num_forcings = 1;
+		globals->min_error_tolerances = 1;
+	break;
+	//--------------------------------------------------------------------------------------------
+	case 102:
 		num_global_params = 3;
 		globals->uses_dam = 0;
 		globals->num_params = 4;
@@ -75,19 +92,25 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 		globals->num_forcings = 1;
 		globals->min_error_tolerances = 1;
 	break;
+	//--------------------------------------------------------------------------------------------
+	case 103:
+		num_global_params = 1; //none
+		globals->uses_dam = 0;
+		globals->num_params = 7;
+		globals->dam_params_size = 0;
+		globals->area_idx = 0;
+		globals->areah_idx = 2;
+		globals->num_disk_params = 6;
+		globals->convertarea_flag = 0;
+		globals->num_forcings = 1;
+		globals->min_error_tolerances = 1;
+	break;
+
+	/******************************************************************************************************
+	 * Model 200s Runoff only models
+	 ******************************************************************************************************/
+
     //--------------------------------------------------------------------------------------------
-    case 254:	num_global_params = 12;
-        globals->uses_dam = 0;
-        globals->num_params = 8;
-        globals->dam_params_size = 0;
-        globals->area_idx = 0;
-        globals->areah_idx = 2;
-        globals->num_disk_params = 3;
-        globals->convertarea_flag = 0;
-        globals->num_forcings = 3;
-        globals->min_error_tolerances = 7;
-        break;
-        //--------------------------------------------------------------------------------------------
 	case 400://tetis01
 		num_global_params = 11;//v0,l1,l2,hu,infil,perc,surfvel,subrestime,gwrestime,meltfactor,tempthres
 		globals->uses_dam = 0;
@@ -203,11 +226,6 @@ void SetOutputConstraints(GlobalVars* globals)
     //Set dim and start of differential variables
     switch (model_uid)
     {
-        case 254:
-            globals->OutputConstrainsHdf5 = &OutputConstraints_Model254_Hdf5;
-            globals->OutputConstrainsPsql = NULL;
-            globals->OutputConstrainsRec = NULL;
-            break;
         default:
             globals->OutputConstrainsHdf5 = NULL;
             globals->OutputConstrainsPsql = NULL;
@@ -225,23 +243,15 @@ void ConvertParams(
     double *params,
     unsigned int model_uid,
     void* external)
-{
-    if (model_uid == 193 ||  model_uid==194)
-    {
-        params[1] *= 1000;	//L: km -> m
-        params[2] *= 1e6;	//A_h: km^2 -> m^2
-    }
-    else if (model_uid == 254 ||  model_uid==400 || model_uid==401 || model_uid==402 || model_uid==403 || model_uid==405 )
-    {
-        
-        params[1] *= 1000;		//L_h: km -> m
-        params[2] *= 1e6;		//A_h: km^2 -> m^2
-    }
-    else if(model_uid==404)
-    {
-        params[1] *= 1000;		//L_h: km -> m
-        params[2] *= 1e6;		//A_h: km^2 -> m^2
-    }
+{	
+	// All models for now use same structure so these are redundant
+	// if (model_uid == 100 || model_uid == 101){
+	// 	params[1] *= 1000;	//L: km -> m
+    //     params[2] *= 1e6;	//A_h: km^2 -> m^2
+	// }
+	//Do same conversion for all
+    params[1] *= 1000;		//L_h: km -> m
+    params[2] *= 1e6;		//A_h: km^2 -> m^2
 }
 
 //Sets the system of ODEs and the Runge-Kutta solver for link. This method MUST set both link->differential
@@ -287,7 +297,10 @@ void InitRoutines(
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_1States;
     }
-        else if (model_uid == 193)
+    /******************************************************************************************************
+	 * Model 100s Routing only models
+	 ******************************************************************************************************/
+	else if (model_uid == 100)
     {
         link->dim = 1;
         link->no_ini_start = 1;
@@ -297,12 +310,12 @@ void InitRoutines(
         link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
         link->dense_indices[0] = 0;
 
-        link->differential = &routing_runoff2;
+        link->differential = &routing_100;
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
     }
-    else if (model_uid == 194)
+	else if (model_uid == 101)
     {
         link->dim = 1;
         link->no_ini_start = 1;
@@ -312,35 +325,43 @@ void InitRoutines(
         link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
         link->dense_indices[0] = 0;
 
-        link->differential = &routing_runoff1;
+        link->differential = &routing_101;
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
     }
-    
-
-    else if (model_uid == 254)
+	else if (model_uid == 102)
     {
-        link->dim = 7;
-        link->no_ini_start = link->dim;
+        link->dim = 1;
+        link->no_ini_start = 1;
         link->diff_start = 0;
 
-        link->num_dense = 2;
+        link->num_dense = 1;
         link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
         link->dense_indices[0] = 0;
-        link->dense_indices[1] = 6;
 
-        if (link->has_res)
-        {
-            link->differential = &TopLayerHillslope_Reservoirs;
-            link->solver = &ForcedSolutionSolver;
-        }
-        else			
-            link->differential = &model254;
+        link->differential = &routing_102;
         link->algebraic = NULL;
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
     }
+	else if (model_uid == 103)
+    {
+        link->dim = 1;
+        link->no_ini_start = 1;
+        link->diff_start = 0;
+
+        link->num_dense = 1;
+        link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
+        link->dense_indices[0] = 0;
+
+        link->differential = &routing_103;
+        link->algebraic = NULL;
+        link->check_state = NULL;
+        link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+    }
+
+	//Others for now below
 	    
 	else if (model_uid == 400) //tetis01
 			{
@@ -507,72 +528,65 @@ void Precalculations(
     unsigned int model_uid,
     void* external)
 {
-    if (model_uid == 193)
+	/******************************************************************************************************
+	 * Model 100s Routing only models
+	 ******************************************************************************************************/
+    if (model_uid == 100)
     {
-        //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
         //Order of parameters: A_i,L_i,A_h,invtau
-        //The numbering is:	0   1   2   3
-        //Order of global_params: v_r,lambda_1,lambda_2,
-        //The numbering is:        0      1        2
+        //The numbering is:	0   1   2	3
+        //Order of global_params: v_r,lambda_1
+        //The numbering is:        0      1
         double* vals = params;
         double A_i = params[0];
         double L_i = params[1];
         double A_h = params[2];
-        //double v_r = global_params[0];
-        //double lambda_1 = global_params[1];
-        //double lambda_2 = global_params[2];
-        //double v_h = global_params[3];
-        //double k3 = global_params[4];
-
-        //vals[3] = v_h * L_i / A_h * 60.0;	                            // [1/min]  k2
-        //vals[4] = k3;                                                   // [1/min]  k3
-        //vals[3] = 60.0*v_r*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	// [1/min]  invtau
-    }
-    else if (model_uid == 194)
-    {
-        //Order of parameters: A_i,L_i,A_h,k2,k3,invtau,c_1,c_2
-        //Order of parameters: A_i,L_i,A_h,invtau
-        //The numbering is:	0   1   2   3
-        //Order of global_params: v_r,lambda_1,lambda_2,
-        //The numbering is:        0      1        2
-        double* vals = params;
-        double A_i = params[0];
-        double L_i = params[1];
-        double A_h = params[2];
-        double v_r = global_params[0];
+        double v_0 = global_params[0];
         double lambda_1 = global_params[1];
-        double lambda_2 = global_params[2];
-        //double v_h = global_params[3];
-        //double k3 = global_params[4];
-
-        //vals[3] = v_h * L_i / A_h * 60.0;	                            // [1/min]  k2
-        //vals[4] = k3;                                                   // [1/min]  k3
-        vals[3] = 60.0*v_r*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	// [1/min]  invtau
+        vals[3] = 60.0*v_0 / ((1.0 - lambda_1)*L_i);	// [1/min]  invtau
     }
-
-    else if (model_uid == 254)
+    else if (model_uid == 101)
     {
-        //Order of parameters: A_i,L_i,A_h,invtau,k_2,k_i,c_1,c_2
-        //The numbering is:     0   1   2    3     4   5   6   7 
-        //Order of global_params: v_0,lambda_1,lambda_2,v_h,k_3,k_I_factor,h_b,S_L,A,B,exponent,v_B
-        //The numbering is:        0      1        2     3   4     5        6   7  8 9    10     11
+        //Order of parameters: A_i,L_i,A_h,v_0,lambda_1,invtau
+        //The numbering is:	0   1   2	3	4	5
         double* vals = params;
         double A_i = params[0];
         double L_i = params[1];
         double A_h = params[2];
-
+		double v_0 = params[3];
+        double lambda_1 = params[4];
+        vals[5] = 60.0*v_0 / ((1.0 - lambda_1)*L_i);	// [1/min]  invtau
+    }
+    else if (model_uid == 102)
+    {
+        //Order of parameters: A_i,L_i,A_h,invtau
+        //The numbering is:	0   1   2   3
+        //Order of global_params: v_0,lambda_1,lambda_2,
+        //The numbering is:        0      1        2
+        double* vals = params;
+        double A_i = params[0];
+        double L_i = params[1];
+        double A_h = params[2];
         double v_0 = global_params[0];
         double lambda_1 = global_params[1];
         double lambda_2 = global_params[2];
-        double v_h = global_params[3];
-        double k_i_factor = global_params[5];
-
-        vals[3] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	 // [1/min]  invtau
-        vals[4] = v_h * L_i / A_h * 60.0;                                // [1/min] k_2
-        vals[5] = vals[4] * k_i_factor;                                  // [1/min] k_i
-        vals[6] = (0.001 / 60.0);                                        // (mm/hr->m/min)  c_1
-        vals[7] = A_h / 60.0;                                            // c_2
+        vals[3] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	// [1/min]  invtau
     }
+    else if (model_uid == 103)
+    {
+        //Order of parameters: A_i,L_i,A_h,v_0,lambda_1,lambda_2,invtau
+        //The numbering is:	0   1   2   3	4	5	6
+        double* vals = params;
+        double A_i = params[0];
+        double L_i = params[1];
+        double A_h = params[2];
+        double v_0 = params[3];
+        double lambda_1 = params[4];
+        double lambda_2 = params[5];
+        vals[6] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	// [1/min]  invtau
+    }
+
+
 	else if (model_uid == 400 || model_uid == 402 || model_uid==403) //tetis01 model
 		{
 		double* vals = params;
@@ -688,23 +702,19 @@ int ReadInitData(
 {
     unsigned int state;
 
-    if (model_uid==193 || model_uid==194)
-    {return 0;}
-    else if (model_uid == 254)
+    if (model_uid==100 || model_uid==101 || model_uid==102 || model_uid==13)
     {
-	//For this model_uid, the extra states need to be set (4,5,6)
-	y_0[4] = 0.0;
-	y_0[5] = 0.0;
-	y_0[6] = y_0[0];
-    }
-        else if (model_uid == 400)        //tetis
-		{
+		return 0;
+	}
 
-	    } 
-        else if (model_uid == 401)        //tetis
-	    {
+	else if (model_uid == 400)        //tetis
+	{
 
-	    }
+	} 
+	else if (model_uid == 401)        //tetis
+	{
+
+	}
 	else if (model_uid == 402 || model_uid==403 || model_uid==405 )        //tetis
 		{
             unsigned int STATE_STORAGE=6;
