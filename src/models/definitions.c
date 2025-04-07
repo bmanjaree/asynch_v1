@@ -250,41 +250,42 @@ void InitRoutines(
         printf("Warning: No solver selected for link ID %u.\n", link->ID);
 
     //Select the RHS function of the ODE (link->differential, link->jacobian)
-    // if (model_uid == 0)
-    // {
-    //     link->dim = 1;
-    //     link->no_ini_start = link->dim;
-    //     link->diff_start = 0;
-
-    //     link->num_dense = 1;
-    //     link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
-    //     link->dense_indices[0] = 0;
-
-    //    // link->differential = &simple_river;
-    //    // link->jacobian = &Jsimple;
-    //     link->algebraic = NULL;
-    //     link->check_state = NULL;
-    //     link->check_consistency = &CheckConsistency_Nonzero_1States;
-    // }
-    /******************************************************************************************************
-	 * Model 100s Routing only models
-	 ******************************************************************************************************/
-	if (model_uid == 100)
+    if (model_uid == 0)
     {
         link->dim = 1;
-        link->no_ini_start = 1;
+        link->no_ini_start = link->dim;
         link->diff_start = 0;
 
         link->num_dense = 1;
         link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
         link->dense_indices[0] = 0;
 
-        link->differential = &routing_100;
+       // link->differential = &simple_river;
+       // link->jacobian = &Jsimple;
         link->algebraic = NULL;
         link->check_state = NULL;
-        link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+        link->check_consistency = &CheckConsistency_Nonzero_1States;
     }
-	else if (model_uid == 101)
+    /******************************************************************************************************
+	 * Model 100s Routing only models
+	 ******************************************************************************************************/
+	// else if (model_uid == 100)
+    // {
+    //     link->dim = 1;
+    //     link->no_ini_start = 1;
+    //     link->diff_start = 0;
+
+    //     link->num_dense = 1;
+    //     link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
+    //     link->dense_indices[0] = 0;
+
+    //     link->differential = &routing_100;
+    //     link->algebraic = NULL;
+    //     link->check_state = NULL;
+    //     link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+    // }
+	// else 
+	if (model_uid == 101)
     {
         link->dim = 1;
         link->no_ini_start = 1;
@@ -595,7 +596,7 @@ int ReadInitData(
 		return 0;
 	}
 
-	else if (model_uid == 400 || model_uid == 404)        //tetis
+	else if (model_uid == 200 || model_uid ==204 || model_uid == 400 || model_uid == 404)        //tetis
 	{
 
 	} 
