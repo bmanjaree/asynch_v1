@@ -39,17 +39,17 @@ void SetParamSizes(GlobalVars* globals, void* external) {
     switch (model_uid)
     {
     //--------------------------------------------------------------------------------------------
-    case 0:	num_global_params = 6;
-        globals->uses_dam = 0;
-        globals->num_params = 20;
-        globals->dam_params_size = 0;
-        globals->area_idx = 2;
-        globals->areah_idx = 1;
-        globals->num_disk_params = 12;
-        globals->convertarea_flag = 1;
-        globals->num_forcings = 0;
-        globals->min_error_tolerances = 1;
-        break;
+    // case 0:	num_global_params = 6;
+    //     globals->uses_dam = 0;
+    //     globals->num_params = 20;
+    //     globals->dam_params_size = 0;
+    //     globals->area_idx = 2;
+    //     globals->areah_idx = 1;
+    //     globals->num_disk_params = 12;
+    //     globals->convertarea_flag = 1;
+    //     globals->num_forcings = 0;
+    //     globals->min_error_tolerances = 1;
+    //     break;
 	/******************************************************************************************************
 	 * Model 100s Routing only models
 	 ******************************************************************************************************/
@@ -123,46 +123,7 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 		globals->num_forcings = 5; //precip, et, temperature,soil temperature,discharge
 		globals->min_error_tolerances = 6; //as many as states:static,surface,subsurf,gw,channel,snow,
 		break;
-		//--------------------------------------------------------------------------------------------
-	case 401://tetis02
-		num_global_params = 11;
-		globals->uses_dam = 0;
-		globals->num_params = 6;
-		globals->dam_params_size = 0;
-		globals->area_idx = 0;
-		globals->areah_idx = 2;
-		globals->num_disk_params = 3;
-		globals->convertarea_flag = 0;
-		globals->num_forcings = 5; //precip, et, temperature,soil temperature,discharge
-		globals->min_error_tolerances = 10;  //as many as states
-		break;
-		//--------------------------------------------------------------------------------------------
-	case 402://tetis with single function for dams
-		num_global_params = 11;
-		globals->uses_dam = 1;
-		globals->num_params = 6;
-		globals->dam_params_size = 0;
-		globals->area_idx = 0;
-		globals->areah_idx = 2;
-		globals->num_disk_params = 3;
-		globals->convertarea_flag = 0;
-		globals->num_forcings = 5;
-		globals->min_error_tolerances = 7;//as many as states:static,surface,subsurf,gw,channel,snow,damstorage
-		break;
-		//--------------------------------------------------------------------------------------------
-    case 403://tetis with individual dams
-		num_global_params = 11;
-		globals->uses_dam = 1;
-		globals->num_params = 6;
-		globals->dam_params_size = 0;
-		globals->area_idx = 0;
-		globals->areah_idx = 2;
-		globals->num_disk_params = 3;
-		globals->convertarea_flag = 0;
-		globals->num_forcings = 5;
-		globals->min_error_tolerances = 7;//as many as states:static,surface,subsurf,gw,channel,snow,damstorage
-		break;
-//--------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------------
 
 	case 404://tetis01
 		num_global_params = 1;//none
@@ -180,23 +141,7 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 		globals->num_forcings = 5; //precip, et, temperature,soil temperature,discharge
 		globals->min_error_tolerances = 6; //link->dim; //as many as states:static,surface,subsurf,gw,channel,snow,
 		break;
-//--------------------------------------------------------------------------------------------
-
-    case 405://tetis with individual dams
-		num_global_params = 14; //v0,l1,l2,hu,infil,perc,surfvel,subrestime,gwrestime,meltfactor,tempthres,lowthres,uptrhes,windowfactor
-		globals->uses_dam = 1;
-		globals->num_params = 6;
-		globals->dam_params_size = 0;
-		globals->area_idx = 0;
-		globals->areah_idx = 2;
-		globals->num_disk_params = 3;
-		globals->convertarea_flag = 0;
-		globals->num_forcings = 5;
-		globals->min_error_tolerances = 7;//as many as states:static,surface,subsurf,gw,channel,snow,damstorage
-		break;
-
-//--------------------------------------------------------------------------------------------
-
+	//--------------------------------------------------------------------------------------------
 	default:
 		printf("Error: Invalid model_uid (%u) in SetParamSizes.\n", model_uid);
 		MPI_Abort(MPI_COMM_WORLD, 1);
@@ -281,22 +226,22 @@ void InitRoutines(
         printf("Warning: No solver selected for link ID %u.\n", link->ID);
 
     //Select the RHS function of the ODE (link->differential, link->jacobian)
-    if (model_uid == 0)
-    {
-        link->dim = 1;
-        link->no_ini_start = link->dim;
-        link->diff_start = 0;
+    // if (model_uid == 0)
+    // {
+    //     link->dim = 1;
+    //     link->no_ini_start = link->dim;
+    //     link->diff_start = 0;
 
-        link->num_dense = 1;
-        link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
-        link->dense_indices[0] = 0;
+    //     link->num_dense = 1;
+    //     link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
+    //     link->dense_indices[0] = 0;
 
-       // link->differential = &simple_river;
-       // link->jacobian = &Jsimple;
-        link->algebraic = NULL;
-        link->check_state = NULL;
-        link->check_consistency = &CheckConsistency_Nonzero_1States;
-    }
+    //    // link->differential = &simple_river;
+    //    // link->jacobian = &Jsimple;
+    //     link->algebraic = NULL;
+    //     link->check_state = NULL;
+    //     link->check_consistency = &CheckConsistency_Nonzero_1States;
+    // }
     /******************************************************************************************************
 	 * Model 100s Routing only models
 	 ******************************************************************************************************/
@@ -384,79 +329,6 @@ void InitRoutines(
 		    link->check_state = NULL;
 		    link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 	} 
-    else if (model_uid == 401) //tetis02
-	{
-		link->dim = 10;//q,basinrain,basinsurf,basinsubsur,basingw,static,surf,subsurf,gw,snow
-		link->no_ini_start = link->dim;
-		link->diff_start = 0;
-
-		link->num_dense = 1;
-		link->dense_indices = (unsigned int*) realloc(link->dense_indices,
-		link->num_dense * sizeof(unsigned int));
-		link->dense_indices[0] = 0;
-		//link->dense_indices[1] = 7;
-
-		if (link->has_res) {
-			link->differential = &model401reservoir;
-			link->solver = &ForcedSolutionSolver;
-		} else
-			link->differential = &model401;
-		link->algebraic = NULL;
-		link->check_state = NULL;
-		link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-	} 
-	else if (model_uid == 402) //tetis with simplified function for dams 
-		{
-			link->dim = 7;// states:static,surface,subsurf,gw,channel,snow,damstorage
-			link->no_ini_start =  link->dim;
-			link->diff_start = 0;
-
-			link->num_dense = 1;
-			link->dense_indices = (unsigned int*) realloc(link->dense_indices,
-					link->num_dense * sizeof(unsigned int));
-			link->dense_indices[0] = 0;
-			
-			if (link->has_res) {
-				link->differential = &Tetis03_Reservoirs;
-				link->solver = &ForcedSolutionSolver;
-			} 
-            else
-            {
-                link->differential = &model402;
-                //link->solver = &ExplicitRKIndex1SolverDam;;
-
-            }
-            link->algebraic = NULL;
-			link->check_state = &dam_check_qvs_402;
-            //link->check_state = NULL;
-			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-		}
-    else if (model_uid == 403) //tetis with individual  dams 
-		{
-			link->dim = 7;// states:static,surface,subsurf,gw,channel,snow,damstorage
-			link->no_ini_start =  link->dim;
-			link->diff_start = 0;
-
-			link->num_dense = 1;
-			link->dense_indices = (unsigned int*) realloc(link->dense_indices,
-					link->num_dense * sizeof(unsigned int));
-			link->dense_indices[0] = 0;
-			
-			if (link->has_res) {
-				link->differential = &Tetis03_Reservoirs;
-				link->solver = &ForcedSolutionSolver;
-			} 
-            else
-            {
-                link->differential = &model403;
-                //link->solver = &ExplicitRKIndex1SolverDam;;
-
-            }
-            link->algebraic = NULL;
-			link->check_state = NULL;
-            //link->check_state = &dam_check_qvs_403;
-			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-		}
     else if (model_uid == 404) //
 			{
 		link->dim = 6;
@@ -478,34 +350,7 @@ void InitRoutines(
 		    link->check_state = NULL;
 		    link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 	}
-    else if (model_uid == 405) //tetis with individual  dams and flowchart
-		{
-			link->dim = 7;// states:static,surface,subsurf,gw,channel,snow,damstorage
-			link->no_ini_start =  link->dim;
-			link->diff_start = 0;
-
-			link->num_dense = 1;
-			link->dense_indices = (unsigned int*) realloc(link->dense_indices,
-					link->num_dense * sizeof(unsigned int));
-			link->dense_indices[0] = 0;
-			
-			if (link->has_res) {
-				link->differential = &Tetis03_Reservoirs;
-				link->solver = &ForcedSolutionSolver;
-			} 
-            else
-            {
-                link->differential = &model405;
-                //link->solver = &ExplicitRKIndex1SolverDam;;
-
-            }
-            link->algebraic = NULL;
-			link->check_state = NULL;
-            //link->check_state = &dam_check_qvs_403;
-			link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-		}
-
-	else
+    else
 		printf("Warning: No ODE selected for link ID %u.\n", link->ID);
 }
 
@@ -587,30 +432,8 @@ void Precalculations(
     }
 
 
-	else if (model_uid == 400 || model_uid == 402 || model_uid==403) //tetis01 model
+	else if (model_uid == 400) //tetis01 model
 		{
-		double* vals = params;
-		double A_i = params[0]; //upstream area of the hillslope
-		double L_i = params[1];	// channel lenght
-		double A_h = params[2]; //area of the hillslope
-		double v_0 = global_params[0]; //velocity river in channels [m/s]
-		double lambda_1 = global_params[1]; //power discharge in routing function
-		double lambda_2 = global_params[2]; //power of area in routing function
-		double Hu = global_params[3]; //max available storage static storage [mm]
-		double infiltration = global_params[4]; //infiltration rate [mm/hr]
-		double percolation = global_params[5]; //percolation rate [mm/hr]
-		double alfa2 = global_params[6]; //surface velocity [m/s]
-		double alfa3 = global_params[7]; //linear reserv. coef gravitational storage [days]
-		double alfa4 = global_params[8]; //linear reserv. coef aquifer storage [days]
-        double melt_factor = global_params[9]; // melting factor in mm/hour/degree
-        double temp_thres = global_params[10]; // in celsius degrees
-		vals[3] = 60.0 * v_0 * pow(A_i, lambda_2) / ((1.0 - lambda_1) * L_i);//[1/min]  invtau params[3]
-		vals[4] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
-		vals[5] = A_h / 60.0;	//  c_2
-
-
-	} else if (model_uid == 401 ) //tetis02 & 03 model
-			{
 		double* vals = params;
 		double A_i = params[0]; //upstream area of the hillslope
 		double L_i = params[1];	// channel lenght
@@ -649,34 +472,6 @@ void Precalculations(
         double temp_thres = params[13]; // in celsius degrees
 	
 	}
-else if (model_uid == 405) //tetis01 model
-		{
-		double* vals = params;
-		double A_i = params[0]; //upstream area of the hillslope
-		double L_i = params[1];	// channel lenght
-		double A_h = params[2]; //area of the hillslope
-		double v_0 = global_params[0]; //velocity river in channels [m/s]
-		double lambda_1 = global_params[1]; //power discharge in routing function
-		double lambda_2 = global_params[2]; //power of area in routing function
-		double Hu = global_params[3]; //max available storage static storage [mm]
-		double infiltration = global_params[4]; //infiltration rate [mm/hr]
-		double percolation = global_params[5]; //percolation rate [mm/hr]
-		double alfa2 = global_params[6]; //surface velocity [m/s]
-		double alfa3 = global_params[7]; //linear reserv. coef gravitational storage [days]
-		double alfa4 = global_params[8]; //linear reserv. coef aquifer storage [days]
-        double melt_factor = global_params[9]; // melting factor in mm/hour/degree
-        double temp_thres = global_params[10]; // in celsius degrees
-        double factor_low_threshold = global_params[11];// factor between and 0 and 1 
-        double factor_high_threshold = global_params[12]; // factor between and 0 and 1 
-        double factor_operating_window = global_params[13]; // factor between and 0 and 1 
-		vals[3] = 60.0 * v_0 * pow(A_i, lambda_2) / ((1.0 - lambda_1) * L_i);//[1/min]  invtau params[3]
-		vals[4] = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
-		vals[5] = A_h / 60.0;	//  c_2
-
-
-	}
-
-
 }
 
 //Set the initial condition for the differential equations a link. This method will be called once for each link. The differential
@@ -702,51 +497,15 @@ int ReadInitData(
 {
     unsigned int state;
 
-    if (model_uid==100 || model_uid==101 || model_uid==102 || model_uid==13)
+    if (model_uid==100 || model_uid==101 || model_uid==102 || model_uid==103)
     {
 		return 0;
 	}
 
-	else if (model_uid == 400)        //tetis
+	else if (model_uid == 400 || model_uid == 404)        //tetis
 	{
 
 	} 
-	else if (model_uid == 401)        //tetis
-	{
-
-	}
-	else if (model_uid == 402 || model_uid==403 || model_uid==405 )        //tetis
-		{
-            unsigned int STATE_STORAGE=6;
-            int state=0; //no dam
-            if(dam){
-                y_0[STATE_STORAGE] = y_0[STATE_STORAGE];
-                state= 1;
-                return state;
-            }
-            else{
-                y_0[STATE_STORAGE] = 0.0;
-                return state;
-            }
-                
-	    }
-    else if (model_uid == 404)        //tetis
-	    {
-
-	    }    
-    /* else if (model_uid == 403)        //tetis03
-		{
-            //printf("model403 state calc\n");
-
-            //state=0; //no dam
-            int state = 0;
-            if(dam){
-                state=1;
-                return state;
-                }
-            else
-                return state; //no dam
-	    }*/     
     else {
 		//If not using algebraic variables, then everything is already set
 		return 0;
