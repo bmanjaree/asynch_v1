@@ -65,7 +65,7 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 		globals->convertarea_flag = 0;
 		globals->num_forcings = 1;
 		globals->min_error_tolerances = 1;
-	break;
+		break;
 	//--------------------------------------------------------------------------------------------
 	case 101:
 		num_global_params = 1; //none
@@ -78,7 +78,7 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 		globals->convertarea_flag = 0;
 		globals->num_forcings = 1;
 		globals->min_error_tolerances = 1;
-	break;
+		break;
 	//--------------------------------------------------------------------------------------------
 	case 102:
 		num_global_params = 3;
@@ -91,7 +91,7 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 		globals->convertarea_flag = 0;
 		globals->num_forcings = 1;
 		globals->min_error_tolerances = 1;
-	break;
+		break;
 	//--------------------------------------------------------------------------------------------
 	case 103:
 		num_global_params = 1; //none
@@ -104,12 +104,41 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 		globals->convertarea_flag = 0;
 		globals->num_forcings = 1;
 		globals->min_error_tolerances = 1;
-	break;
+		break;
 
 	/******************************************************************************************************
 	 * Model 200s Runoff only models
 	 ******************************************************************************************************/
+	//--------------------------------------------------------------------------------------------
+	case 200:
+		num_global_params = 8;//hu,infil,perc,surfvel,subrestime,gwrestime,meltfactor,tempthres
+		globals->uses_dam = 0;
+		globals->num_params = 3;//ai,li,ah
+		globals->dam_params_size = 0;
+		globals->area_idx = 0;
+		globals->areah_idx = 2;
+		globals->num_disk_params = 3;
+		globals->convertarea_flag = 0;
+		globals->num_forcings = 4; //precip, et, temperature,soil temperature
+		globals->min_error_tolerances = 7; //as many as states:static,surface,subsurf,gw,snow,surface runoff, subsurface runoff
+		break;
+	//--------------------------------------------------------------------------------------------
+	case 204:
+		num_global_params = 1;//
+		globals->uses_dam = 0;
+		globals->num_params = 11;//ai,li,ah,hu,infil,perc,surfvel,subrestime,gwrestime,meltfactor,tempthres
+		globals->dam_params_size = 0;
+		globals->area_idx = 0;
+		globals->areah_idx = 2;
+		globals->num_disk_params = 11;
+		globals->convertarea_flag = 0;
+		globals->num_forcings = 4; //precip, et, temperature,soil temperature
+		globals->min_error_tolerances = 7; //as many as states:static,surface,subsurf,gw,snow,surface runoff, subsurface runoff
+		break;
 
+	/******************************************************************************************************
+	* Model 400s original runoff+routing models
+	******************************************************************************************************/
     //--------------------------------------------------------------------------------------------
 	case 400://tetis01
 		num_global_params = 11;//v0,l1,l2,hu,infil,perc,surfvel,subrestime,gwrestime,meltfactor,tempthres
@@ -124,15 +153,10 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 		globals->min_error_tolerances = 6; //as many as states:static,surface,subsurf,gw,channel,snow,
 		break;
 	//--------------------------------------------------------------------------------------------
-
 	case 404://tetis01
 		num_global_params = 1;//none
 		globals->uses_dam = 0;
 		globals->num_params = 14;
-        //1)ai,2)lengt,3)ah,4)v0,5)lambda1,
-        //6)lambda2,7)hu,8)infil,9)perc,
-        //10)vsurf,11)ressubsurf,12)resgw,
-        //13)meltf,14)tempth
 		globals->dam_params_size = 0;
 		globals->area_idx = 0;
 		globals->areah_idx = 2;
@@ -245,7 +269,7 @@ void InitRoutines(
     /******************************************************************************************************
 	 * Model 100s Routing only models
 	 ******************************************************************************************************/
-	else if (model_uid == 100)
+	if (model_uid == 100)
     {
         link->dim = 1;
         link->no_ini_start = 1;
@@ -305,11 +329,46 @@ void InitRoutines(
         link->check_state = NULL;
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
     }
+    /******************************************************************************************************
+	* Model 200s Routing only models
+	******************************************************************************************************/
+	else if (model_uid == 200) //tetis01
+	{
+		link->dim = 7; //static,surface,interflow,aquifer,snow,surface runoff, subsurface runoff
+		link->no_ini_start = 5; //for runoff only tanks need initial starts
+		link->diff_start = 0;
 
-	//Others for now below
-	    
+		link->num_dense = 1;
+		link->dense_indices = (unsigned int*) realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
+		link->dense_indices[0] = 0;
+
+		link->differential = &model200;
+		link->algebraic = NULL;
+		link->check_state = NULL;
+		link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+	} 
+
+	else if (model_uid == 204) //tetis01
+	{
+		link->dim = 7; //static,surface,interflow,aquifer,snow,surface runoff, subsurface runoff
+		link->no_ini_start = 5; //for runoff only tanks need initial starts
+		link->diff_start = 0;
+
+		link->num_dense = 1;
+		link->dense_indices = (unsigned int*) realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
+		link->dense_indices[0] = 0;
+
+		link->differential = &model204;
+		link->algebraic = NULL;
+		link->check_state = NULL;
+		link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+	} 
+
+	/******************************************************************************************************
+	* Model 400s Original routing+runoff models
+	******************************************************************************************************/
 	else if (model_uid == 400) //tetis01
-			{
+	{
 		link->dim = 6;
 		link->no_ini_start = link->dim;
 		link->diff_start = 0;
@@ -330,7 +389,7 @@ void InitRoutines(
 		    link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
 	} 
     else if (model_uid == 404) //
-			{
+	{
 		link->dim = 6;
 		link->no_ini_start = link->dim;
 		link->diff_start = 0;
@@ -431,9 +490,44 @@ void Precalculations(
         vals[6] = 60.0*v_0*pow(A_i, lambda_2) / ((1.0 - lambda_1)*L_i);	// [1/min]  invtau
     }
 
-
+	/******************************************************************************************************
+	* Model 200s Runoff only models
+	******************************************************************************************************/
+	else if (model_uid == 200) //tetis01 model
+	{
+		double* vals = params;
+		double A_i = params[0]; //upstream area of the hillslope
+		double L_i = params[1];	// channel lenght
+		double A_h = params[2]; //area of the hillslope
+		double Hu = global_params[0]; //max available storage static storage [mm]
+		double infiltration = global_params[1]; //infiltration rate [mm/hr]
+		double percolation = global_params[2]; //percolation rate [mm/hr]
+		double alfa2 = global_params[3]; //surface velocity [m/s]
+		double alfa3 = global_params[4]; //linear reserv. coef gravitational storage [days]
+		double alfa4 = global_params[5]; //linear reserv. coef aquifer storage [days]
+		double melt_factor = global_params[6]; // melting factor in mm/hour/degree
+		double temp_thres = global_params[7]; // in celsius degrees
+	} 
+	else if (model_uid == 204) //spatially varying
+	{
+		double* vals = params;
+		double A_i = params[0]; // //upstream area of the hillslope
+		double L_i = params[1];	// channel lenght
+		double A_h = params[2]; //area of the hillslope
+		double Hu = params[3]; //max available storage static storage [mm]
+		double infiltration = params[4]; //infiltration rate [mm/hr]
+		double percolation = params[5]; //percolation rate [mm/hr]
+		double vsurf = params[6]; //surf velocity [m/s]
+		double alfa3 = params[7]; //linear reserv. coef gravitational storage [days]
+		double alfa4 = params[8]; //linear reserv. coef aquifer storage [days]
+		double melt_factor = params[9]; // melting factor in mm/hour/degree
+		double temp_thres = params[10]; // in celsius degrees
+	}
+	/******************************************************************************************************
+	* Model 400s Original combined models
+	******************************************************************************************************/
 	else if (model_uid == 400) //tetis01 model
-		{
+	{
 		double* vals = params;
 		double A_i = params[0]; //upstream area of the hillslope
 		double L_i = params[1];	// channel lenght
@@ -470,7 +564,6 @@ void Precalculations(
 		double alfa4 = params[11]; //linear reserv. coef aquifer storage [days]
         double melt_factor = params[12]; // melting factor in mm/hour/degree
         double temp_thres = params[13]; // in celsius degrees
-	
 	}
 }
 

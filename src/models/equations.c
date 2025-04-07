@@ -30,8 +30,8 @@
 // double sq(double x) { return x * x; } #why is this here?
 
 /******************************************************************************************************
- * Model 100s Routing only models
- ******************************************************************************************************/
+* Model 100s Routing only models
+******************************************************************************************************/
 
 //Type 100
 //Non-linear routing equation with two parameter velocity equation globally
@@ -195,6 +195,251 @@ void routing_103(double t, \
  * Model 200s Now changed to runoff only models
  ******************************************************************************************************/
 
+//Type 200
+//Tetis model structure for runoff generation using global soil parameters
+//Four layers
+//y_i: vector with model states to be resolved by the solver
+//dim:scalar with number of dimensions (states?) of the model
+//y_p
+//num_parents: number of tributary links (not used)
+//max_dim
+//global_params: global parameters applied to all hillslopes. See Precalculations in definitions.c
+//params: distributed parameters per hillslope. see Precalculations in definitions.c
+//forcing_values: precip, temperature, ET, frozen ground
+void model200(double t, \
+    const double * const y_i, \
+    unsigned int dim, \
+    const double * const y_p, \
+    unsigned short num_parents, \
+    unsigned int max_dim, \
+    const double * const global_params, \
+    const double * const params, \
+    const double * const forcing_values, \
+    const QVSData * const qvs, \
+    int state, \
+    void* user, \
+    double *ans)
+{
+
+    unsigned short i; //auxiliary variable for loops
+
+    //Spatially varying parameters
+    double L = params[1];   // Length of the channel [m]
+    double A_h = params[2]; //Area of the hillslopes [m^2]
+    double c_1 = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
+
+    // Global Parameters
+    double Hu = global_params[0]/1000; //max available storage in static tank [mm] to [m]
+    double infiltration = global_params[1]*c_1; //infiltration rate [m/min]
+    double percolation = global_params[2]*c_1; // percolation rate to aquifer [m/min]
+    double alfa2 = global_params[3]; //surface velocity in m/s
+    double alfa3 = global_params[4]*24*60; //interflow storage time [days] to [min].
+    double alfa4 = global_params[5]* 24*60; //aquifer residence time [days] to [min].
+    double melt_factor = global_params[6] *(1/(24*60.0)) *(1/1000.0); // melting factor  mm/day/degree to m/min/degree
+    double temp_thres=global_params[7]; // celsius degrees
+
+    //Forcings
+    double rainfall = forcing_values[0] * c_1; //rainfall. from [mm/hr] to [m/min]
+    double e_pot = forcing_values[1] * (1e-3 / (30.0*24.0*60.0));//potential et[mm/month] -> [m/min]
+    double temperature = forcing_values[2]; //daily temperature in Celsius
+    double frozen_ground = forcing_values[3]; // 1 if ground is frozen, 0 if not frozen 
+
+    //states
+    unsigned int STATE_STATIC = 0;
+    unsigned int STATE_SURFACE = 1;
+    unsigned int STATE_SUBSURF = 2;
+    unsigned int STATE_GW = 3;
+    unsigned int STATE_SNOW = 4;
+    unsigned int STATE_SURF_RUNOFF = 5;
+    unsigned int STATE_SUB_RUNOFF = 6;
+
+    //INITIAL VALUES
+    double h5 = y_i[STATE_SNOW];//snow storage [m]
+    double h1 = y_i[STATE_STATIC]; //static storage [m]
+    double h2 = y_i[STATE_SURFACE];//water in the hillslope surface [m]
+    double h3 = y_i[STATE_SUBSURF]; //water in the gravitational storage in the upper part of soil [m]
+    double h4 = y_i[STATE_GW]; //water in the aquifer storage [m]
+
+    //snow storage
+    double x1 = 0;
+    if(temperature==0){ //temperature =0 is the flag for no forcing the variable. no snow process
+        x1 = rainfall;
+        ans[STATE_SNOW]=0;
+    }
+    else{
+        if(temperature>=temp_thres){
+            double snowmelt = min(h5,temperature * melt_factor); // in [m]
+            ans[STATE_SNOW]=-snowmelt; //melting outs of snow storage
+            x1 = rainfall + snowmelt; // in [m]
+        }
+        if(temperature != 0 & temperature <temp_thres){
+            ans[STATE_SNOW]=rainfall; //all precipitation is stored in the snow storage
+            x1=0;
+        }
+    }
+    
+    //static storage
+    double x2 = max(0,x1 + h1 - Hu ); //excedance flow to the second storage [m] [m/min] check units
+    //if ground is frozen, x1 goes directly to the surface; therefore nothing is diverted to static tank
+    if(frozen_ground == 1){
+        x2 = x1;
+    }
+    double d1 = x1 - x2; // the input to static tank [m/min]
+    double out1 = min(e_pot, h1); //evaporation from the static tank. it cannot evaporate more than h1 [m]
+    ans[STATE_STATIC] = d1 - out1; //differential equation of static storage
+
+    //surface storage tank
+     if(frozen_ground == 1){
+        infiltration = 0;
+    }
+    double x3 = min(x2, infiltration); //water that infiltrates to gravitational storage [m/min]
+    double d2 = x2 - x3; // the input to surface storage [m] check units
+    double w = alfa2 * L / A_h  * 60; // [1/min]
+    w = min(1,w); //water can take less than 1 min (dt) to leave surface
+    double out2 =0;
+    out2  = h2 * w; //direct runoff [m/min]
+    ans[STATE_SURFACE] = d2 - out2; //differential equation of surface storage
+
+    // SUBSURFACE storage
+    double x4 = min(x3,percolation); //water that percolates to aquifer storage [m/min]
+    double d3 = x3 - x4; // input to gravitational storage [m/min]
+    double out3=0;
+    if(alfa3>=1)
+        out3 = h3/alfa3; //interflow [m/min]
+    ans[STATE_SUBSURF] = d3 - out3; //differential equation for gravitational storage
+
+    //aquifer storage
+    double x5 = 0;//water loss to deeper aquifer [m]
+    double d4 = x4 - x5;
+    double out4=0;
+    if(alfa4>=1)
+        out4 = h4/alfa4 ; //base flow [m/min]
+    ans[STATE_GW] = d4 - out4; //differential equation for aquifer storage
+
+    //save surface and subrunoff
+    ans[STATE_SURF_RUNOFF] = out2/c_1; //m/min to mm/hr
+    ans[STATE_SUB_RUNOFF] = (out3 + out4)/c_1; //m/min to mm/hr
+}
+
+//Type 204
+//Tetis model structure for runoff generation using spatially varying soil parameters
+//Four layers
+//Global parameters: 0
+//global_params: global parameters applied to all hillslopes. See Precalculations in definitions.c
+//params: distributed parameters per hillslope. see Precalculations in definitions.c
+//forcing_values: precipitation, PET, temperature, frozen ground
+void model204(double t, \
+    const double * const y_i, \
+    unsigned int dim, \
+    const double * const y_p, \
+    unsigned short num_parents, \
+    unsigned int max_dim, \
+    const double * const global_params, \
+    const double * const params, \
+    const double * const forcing_values, \
+    const QVSData * const qvs, \
+    int state, \
+    void* user, \
+    double *ans)
+{
+    unsigned short i; //auxiliary variable for loops
+
+    //Spatially varying parameters
+    double c_1 = (0.001 / 60.0);		//(mm/hr->m/min)  c_1
+    double A_i = params[0]; //drainage area in km2
+    double L = params[1];   // Length of the channel [m]
+    double A_h = params[2]; //Area of the hillslopes [m^2] 
+    double Hu = params[3]/1000; //[m]
+    double infiltration = params[4]*c_1; //infiltration rate [m/min]
+    double percolation = params[5]*c_1; // percolation rate to aquifer [m/min]
+    double alfa2 = params[6]; //velocity in m/s 
+    double alfa3 = params[7]*24*60; //residence time [days] to [min].
+    double alfa4 = params[8]*24*60; //residence time [days] to [min].
+    double melt_factor = params[9]*(1/(24*60.0))*(1/1000.0); // mm/day/degree to m/min/degree
+    double temp_thres= params[10]; // celsius degrees
+
+    //Forcings
+    double rainfall = forcing_values[0] * c_1; //rainfall. from [mm/hr] to [m/min]
+    double e_pot = forcing_values[1] * (1e-3 / (30.0*24.0*60.0));//potential et[mm/month] -> [m/min]
+    double temperature = forcing_values[2]; //daily temperature in Celsius
+    double frozen_ground = forcing_values[3]; // 1 if ground is frozen, 0 if not frozen 
+
+    //states
+    unsigned int STATE_STATIC = 0;
+    unsigned int STATE_SURFACE = 1;
+    unsigned int STATE_SUBSURF = 2;
+    unsigned int STATE_GW = 3;
+    unsigned int STATE_SNOW = 4;
+    unsigned int STATE_SURF_RUNOFF = 5;
+    unsigned int STATE_SUB_RUNOFF = 6;
+
+    //INITIAL VALUES
+    double h5 = y_i[STATE_SNOW];//snow storage [m]
+    double h1 = y_i[STATE_STATIC]; //static storage [m]
+    double h2 = y_i[STATE_SURFACE];//water in the hillslope surface [m]
+    double h3 = y_i[STATE_SUBSURF]; //water in the gravitational storage in the upper part of soil [m]
+    double h4 = y_i[STATE_GW]; //water in the aquifer storage [m]
+
+    //snow storage
+    double x1 = 0;
+    if(temperature==0){ //temperature =0 is the flag for no forcing the variable. no snow process
+        x1 = rainfall;
+        ans[STATE_SNOW]=0;
+    }
+    else{
+        if(temperature>=temp_thres){
+            double snowmelt = min(h5,temperature * melt_factor); // in [m]
+            ans[STATE_SNOW]=-snowmelt; //melting outs of snow storage
+            x1 = rainfall + snowmelt; // in [m]
+        }
+        if(temperature != 0 & temperature <temp_thres){
+            ans[STATE_SNOW]=rainfall; //all precipitation is stored in the snow storage
+            x1=0;
+        }
+    }
+    
+    //static storage
+    double x2 = max(0,x1 + h1 - Hu ); //excedance flow to the second storage [m] [m/min] check units
+    //if ground is frozen, x1 goes directly to the surface; therefore nothing is diverted to static tank
+    if(frozen_ground == 1){
+        x2 = x1;
+    }
+    double d1 = x1 - x2; // the input to static tank [m/min]
+    double out1 = min(e_pot, h1); //evaporation from the static tank. it cannot evaporate more than h1 [m]
+    ans[STATE_STATIC] = d1 - out1; //differential equation of static storage
+
+    //surface storage tank
+     if(frozen_ground == 1){
+        infiltration = 0;
+    }
+    double x3 = min(x2, infiltration); //water that infiltrates to gravitational storage [m/min]
+    double d2 = x2 - x3; // the input to surface storage [m] check units
+    double w = alfa2 * L / A_h  * 60; // [1/min]
+    w = min(1,w); //water can take less than 1 min (dt) to leave surface
+    double out2 =0;
+    out2  = h2 * w; //direct runoff [m/min]
+    ans[STATE_SURFACE] = d2 - out2; //differential equation of surface storage
+
+    // SUBSURFACE storage
+    double x4 = min(x3,percolation); //water that percolates to aquifer storage [m/min]
+    double d3 = x3 - x4; // input to gravitational storage [m/min]
+    double out3=0;
+    if(alfa3>=1)
+        out3 = h3/alfa3; //interflow [m/min]
+    ans[STATE_SUBSURF] = d3 - out3; //differential equation for gravitational storage
+
+    //aquifer storage
+    double x5 = 0;//water loss to deeper aquifer [m]
+    double d4 = x4 - x5;
+    double out4=0;
+    if(alfa4>=1)
+        out4 = h4/alfa4 ; //base flow [m/min]
+    ans[STATE_GW] = d4 - out4; //differential equation for aquifer storage
+
+    //save surface and subrunoff
+    ans[STATE_SURF_RUNOFF] = out2/c_1; //m/min to mm/hr
+    ans[STATE_SUB_RUNOFF] = (out3 + out4)/c_1; //m/min to mm/hr
+}
 
 
 /******************************************************************************************************
@@ -319,7 +564,6 @@ void model400(double t, \
 		//double out1 = (e_pot > h1) ? e_pot : 0.0;
 		ans[STATE_STATIC] = d1 - out1; //differential equation of static storage
 
-
 		//surface storage tank
 		double infiltration = global_params[4]*c_1; //infiltration rate [m/min]
          if(frozen_ground == 1){
@@ -333,7 +577,6 @@ void model400(double t, \
         double out2 =0;
         out2  = h2 * w; //direct runoff [m/min]
 		ans[STATE_SURFACE] = d2 - out2; //differential equation of surface storage
-
 
 		// SUBSURFACE storage
 		double percolation = global_params[5]*c_1; // percolation rate to aquifer [m/min]
