@@ -39,17 +39,17 @@ void SetParamSizes(GlobalVars* globals, void* external) {
     switch (model_uid)
     {
     //--------------------------------------------------------------------------------------------
-    // case 0:	num_global_params = 6;
-    //     globals->uses_dam = 0;
-    //     globals->num_params = 20;
-    //     globals->dam_params_size = 0;
-    //     globals->area_idx = 2;
-    //     globals->areah_idx = 1;
-    //     globals->num_disk_params = 12;
-    //     globals->convertarea_flag = 1;
-    //     globals->num_forcings = 0;
-    //     globals->min_error_tolerances = 1;
-    //     break;
+    case 0:	num_global_params = 6;
+        globals->uses_dam = 0;
+        globals->num_params = 20;
+        globals->dam_params_size = 0;
+        globals->area_idx = 2;
+        globals->areah_idx = 1;
+        globals->num_disk_params = 12;
+        globals->convertarea_flag = 1;
+        globals->num_forcings = 0;
+        globals->min_error_tolerances = 1;
+        break;
 	/******************************************************************************************************
 	 * Model 100s Routing only models
 	 ******************************************************************************************************/
@@ -269,23 +269,22 @@ void InitRoutines(
     /******************************************************************************************************
 	 * Model 100s Routing only models
 	 ******************************************************************************************************/
-	// else if (model_uid == 100)
-    // {
-    //     link->dim = 1;
-    //     link->no_ini_start = 1;
-    //     link->diff_start = 0;
+	else if (model_uid == 100)
+    {
+        link->dim = 1;
+        link->no_ini_start = 1;
+        link->diff_start = 0;
 
-    //     link->num_dense = 1;
-    //     link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
-    //     link->dense_indices[0] = 0;
+        link->num_dense = 1;
+        link->dense_indices = (unsigned int*)realloc(link->dense_indices, link->num_dense * sizeof(unsigned int));
+        link->dense_indices[0] = 0;
 
-    //     link->differential = &routing_100;
-    //     link->algebraic = NULL;
-    //     link->check_state = NULL;
-    //     link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
-    // }
-	// else 
-	if (model_uid == 101)
+        link->differential = &routing_100;
+        link->algebraic = NULL;
+        link->check_state = NULL;
+        link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+    }
+	else if (model_uid == 101)
     {
         link->dim = 1;
         link->no_ini_start = 1;
@@ -336,7 +335,7 @@ void InitRoutines(
 	else if (model_uid == 200) //tetis01
 	{
 		link->dim = 7; //static,surface,interflow,aquifer,snow,surface runoff, subsurface runoff
-		link->no_ini_start = 5; //for runoff only tanks need initial starts
+		link->no_ini_start = 7; //for runoff only tanks need initial starts
 		link->diff_start = 0;
 
 		link->num_dense = 1;
@@ -352,7 +351,7 @@ void InitRoutines(
 	else if (model_uid == 204) //tetis01
 	{
 		link->dim = 7; //static,surface,interflow,aquifer,snow,surface runoff, subsurface runoff
-		link->no_ini_start = 5; //for runoff only tanks need initial starts
+		link->no_ini_start = 7; //for runoff only tanks need initial starts
 		link->diff_start = 0;
 
 		link->num_dense = 1;

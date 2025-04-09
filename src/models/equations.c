@@ -259,6 +259,8 @@ void model200(double t, \
     double h2 = y_i[STATE_SURFACE];//water in the hillslope surface [m]
     double h3 = y_i[STATE_SUBSURF]; //water in the gravitational storage in the upper part of soil [m]
     double h4 = y_i[STATE_GW]; //water in the aquifer storage [m]
+    double surface_runoff = y_i[STATE_SURF_RUNOFF]; //surface runoff [mm/hr]
+    double subsurface_runoff = y_i[STATE_SUB_RUNOFF]; //subsurface runoff [mm/hr]
 
     //snow storage
     double x1 = 0;
@@ -317,8 +319,8 @@ void model200(double t, \
     ans[STATE_GW] = d4 - out4; //differential equation for aquifer storage
 
     //save surface and subrunoff
-    ans[STATE_SURF_RUNOFF] = out2/c_1; //m/min to mm/hr
-    ans[STATE_SUB_RUNOFF] = (out3 + out4)/c_1; //m/min to mm/hr
+    ans[STATE_SURF_RUNOFF] = -surface_runoff  + out2/c_1; //m/min to mm/hr
+    ans[STATE_SUB_RUNOFF] = -subsurface_runoff + (out3 + out4)/c_1; //m/min to mm/hr
 }
 
 //Type 204
@@ -378,7 +380,9 @@ void model204(double t, \
     double h1 = y_i[STATE_STATIC]; //static storage [m]
     double h2 = y_i[STATE_SURFACE];//water in the hillslope surface [m]
     double h3 = y_i[STATE_SUBSURF]; //water in the gravitational storage in the upper part of soil [m]
-    double h4 = y_i[STATE_GW]; //water in the aquifer storage [m]
+    double h4 = y_i[STATE_GW]; //water in the aquifer storage [m] 
+    double surface_runoff = y_i[STATE_SURF_RUNOFF]; //surface runoff [mm/hr]
+    double subsurface_runoff = y_i[STATE_SUB_RUNOFF]; //subsurface runoff [mm/hr]   
 
     //snow storage
     double x1 = 0;
@@ -437,8 +441,8 @@ void model204(double t, \
     ans[STATE_GW] = d4 - out4; //differential equation for aquifer storage
 
     //save surface and subrunoff
-    ans[STATE_SURF_RUNOFF] = out2/c_1; //m/min to mm/hr
-    ans[STATE_SUB_RUNOFF] = (out3 + out4)/c_1; //m/min to mm/hr
+    ans[STATE_SURF_RUNOFF] = -surface_runoff  + out2/c_1; //m/min to mm/hr
+    ans[STATE_SUB_RUNOFF] = -subsurface_runoff + (out3 + out4)/c_1; //m/min to mm/hr
 }
 
 
