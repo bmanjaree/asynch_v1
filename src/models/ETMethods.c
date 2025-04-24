@@ -41,3 +41,22 @@ double HamonPET(double temperature,\
     
     return PET;
 }
+
+
+/***********************************************************************************************************************************
+* Put equations for actual ET estimation here.
+* *********************************************************************************************************************************/
+//Use relationship from Amilcare Textbook. Assume that Ew is zero and that below wilting point goes to zero.
+double ETactual(double Emax,\
+    double s,\
+    double sw,\
+    double ss)
+{
+    double ETa = 0; 
+    if (s > sw && s <= ss){
+        ETa = Emax * (s-sw)/(ss-sw); //linear decrease 
+    } else if (s > ss){
+        ETa = Emax;
+    }
+    return ETa;
+}
