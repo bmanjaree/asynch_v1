@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <math.h>
-#define M_PI 3.14159265358979323846
 
 /***********************************************************************************************************************************
 * Put equations for PET estimation based on other forcings here.
@@ -23,7 +22,8 @@ double HamonPET(double temperature,\
         double theta = 0.2163108 + 2 * atan(0.9671396 * tan(0.00860 * (doy - 186)));
         double phi = asin(0.39795 * cos(theta));
         double p = 0.8333; //the daylength coefficient
-        double D = (24 - (24/M_PI)*acos((sin(p*M_PI/180) + sin(latitude*M_PI/180)*sin(phi))/(cos(latitude*M_PI/180)*cos(phi))))/12;
+        double PI = 3.14159265358979323846; //Define PI
+        double D = (24 - (24/PI)*acos((sin(p*PI/180) + sin(latitude*PI/180)*sin(phi))/(cos(latitude*PI/180)*cos(phi))))/12;
         
         //For artic cases
         if (isnan(D)) {
