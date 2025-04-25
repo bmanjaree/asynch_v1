@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <math.h>
+#include <models/ETMethods.h>
 
 /***********************************************************************************************************************************
 * Put equations for PET estimation based on other forcings here.
 * *********************************************************************************************************************************/
 
 //Hamon PET estimation for daily average temperature using the CBM model to compute the number of 
-// Requires the temperature input as daily average; latitude of hillslope; and day of year at time step.
+// Requires the temperature input as daily average [c]; latitude of hillslope[degree]; and day of year at time step [1-365].
 double HamonPET(double temperature,\
                 double latitude, \
                 double doy) 

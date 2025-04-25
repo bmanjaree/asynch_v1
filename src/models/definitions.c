@@ -111,29 +111,29 @@ void SetParamSizes(GlobalVars* globals, void* external) {
 	 ******************************************************************************************************/
 	//--------------------------------------------------------------------------------------------
 	case 200:
-		num_global_params = 8;//hu,infil,perc,surfvel,subrestime,gwrestime,meltfactor,tempthres
+		num_global_params = 11;//hu,infil,perc,sw,ss,manning_n,slope,subrestime,gwrestime,meltfactor,tempthres
 		globals->uses_dam = 0;
-		globals->num_params = 3;//ai,li,ah
+		globals->num_params = 4;//ai,li,ah,latitude
 		globals->dam_params_size = 0;
 		globals->area_idx = 0;
 		globals->areah_idx = 2;
-		globals->num_disk_params = 3;
+		globals->num_disk_params = 4;
 		globals->convertarea_flag = 0;
-		globals->num_forcings = 4; //precip, et, temperature,soil temperature
-		globals->min_error_tolerances = 7; //as many as states:static,surface,subsurf,gw,snow,surface runoff, subsurface runoff
+		globals->num_forcings = 3; //precip, temperature, doy
+		globals->min_error_tolerances = 9; //as many as states:static,surface,subsurf,gw,snow,surface runoff, subsurface runoff, air temp, soil temp
 		break;
 	//--------------------------------------------------------------------------------------------
 	case 204:
 		num_global_params = 1;//
 		globals->uses_dam = 0;
-		globals->num_params = 11;//ai,li,ah,hu,infil,perc,surfvel,subrestime,gwrestime,meltfactor,tempthres
+		globals->num_params = 15;//ai,li,ah,latitude,hu,infil,perc,sw,ss,manning_n,slope,subrestime,gwrestime,meltfactor,tempthres
 		globals->dam_params_size = 0;
 		globals->area_idx = 0;
 		globals->areah_idx = 2;
-		globals->num_disk_params = 11;
+		globals->num_disk_params = 15;
 		globals->convertarea_flag = 0;
-		globals->num_forcings = 4; //precip, et, temperature,soil temperature
-		globals->min_error_tolerances = 7; //as many as states:static,surface,subsurf,gw,snow,surface runoff, subsurface runoff
+		globals->num_forcings = 3; //precip, temperature, doy
+		globals->min_error_tolerances = 9; //as many as states:static,surface,subsurf,gw,snow,surface runoff, subsurface runoff, air temp, soil temp
 		break;
 
 	/******************************************************************************************************
@@ -330,12 +330,12 @@ void InitRoutines(
         link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
     }
     /******************************************************************************************************
-	* Model 200s Routing only models
+	* Model 200s Runoff only models
 	******************************************************************************************************/
-	else if (model_uid == 200) //tetis01
+	else if (model_uid == 200) //runoff
 	{
-		link->dim = 7; //static,surface,interflow,aquifer,snow,surface runoff, subsurface runoff
-		link->no_ini_start = 7; //for runoff only tanks need initial starts
+		link->dim = 9; //static,surface,interflow,aquifer,snow,surface runoff, subsurface runoff, air temperature, soil temperature
+		link->no_ini_start = 9; //for runoff only tanks need initial starts
 		link->diff_start = 0;
 
 		link->num_dense = 1;
@@ -350,8 +350,8 @@ void InitRoutines(
 
 	else if (model_uid == 204) //tetis01
 	{
-		link->dim = 7; //static,surface,interflow,aquifer,snow,surface runoff, subsurface runoff
-		link->no_ini_start = 7; //for runoff only tanks need initial starts
+		link->dim = 9; //static,surface,interflow,aquifer,snow,surface runoff, subsurface runoff, air temperature, soil temperature
+		link->no_ini_start = 9; //for runoff only tanks need initial starts
 		link->diff_start = 0;
 
 		link->num_dense = 1;
@@ -499,14 +499,18 @@ void Precalculations(
 		double A_i = params[0]; //upstream area of the hillslope
 		double L_i = params[1];	// channel lenght
 		double A_h = params[2]; //area of the hillslope
+		double latitude = params[3]; //hillslope latitude in degrees for PET calculations
 		double Hu = global_params[0]; //max available storage static storage [mm]
 		double infiltration = global_params[1]; //infiltration rate [mm/hr]
 		double percolation = global_params[2]; //percolation rate [mm/hr]
-		double alfa2 = global_params[3]; //surface velocity [m/s]
-		double alfa3 = global_params[4]; //linear reserv. coef gravitational storage [days]
-		double alfa4 = global_params[5]; //linear reserv. coef aquifer storage [days]
-		double melt_factor = global_params[6]; // melting factor in mm/hour/degree
-		double temp_thres = global_params[7]; // in celsius degrees
+		double sw = global_params[3]; // relative soil moisture wilting point
+		double ss = global_params[4]; // relative soil moisture point of stomatal closure
+		double manning_n = global_params[5]; //manning's n
+		double slope = global_params[6]; //average slope across hillslope
+		double alfa3 = global_params[7]; //linear reserv. coef gravitational storage [days]
+		double alfa4 = global_params[8]; //linear reserv. coef aquifer storage [days]
+		double melt_factor = global_params[9]; // melting factor in mm/hour/degree
+		double temp_thres = global_params[10]; // rainfall/snow threshold in celsius degrees
 	} 
 	else if (model_uid == 204) //spatially varying
 	{
@@ -514,14 +518,18 @@ void Precalculations(
 		double A_i = params[0]; // //upstream area of the hillslope
 		double L_i = params[1];	// channel lenght
 		double A_h = params[2]; //area of the hillslope
-		double Hu = params[3]; //max available storage static storage [mm]
-		double infiltration = params[4]; //infiltration rate [mm/hr]
-		double percolation = params[5]; //percolation rate [mm/hr]
-		double vsurf = params[6]; //surf velocity [m/s]
-		double alfa3 = params[7]; //linear reserv. coef gravitational storage [days]
-		double alfa4 = params[8]; //linear reserv. coef aquifer storage [days]
-		double melt_factor = params[9]; // melting factor in mm/hour/degree
-		double temp_thres = params[10]; // in celsius degrees
+		double latitude = params[3]; //hillslope latitude in degrees for PET calculations
+		double Hu = params[4]; //max available storage static storage [mm]
+		double infiltration = params[5]; //infiltration rate [mm/hr]
+		double percolation = params[6]; //percolation rate [mm/hr]
+		double sw = params[7]; // relative soil moisture wilting point
+    	double ss = params[8]; // relative soil moisture point of stomatal closure 
+   	    double manning_n = params[9]; //manning's n [-]
+    	double slope = params[10]; //average slope across hillslope [m/m]
+		double alfa3 = params[11]; //linear reserv. coef gravitational storage [days]
+		double alfa4 = params[12]; //linear reserv. coef aquifer storage [days]
+		double melt_factor = params[13]; // melting factor in mm/hour/degree
+		double temp_thres = params[14]; // in celsius degrees
 	}
 	/******************************************************************************************************
 	* Model 400s Original combined models

@@ -25,6 +25,8 @@ libasynch_a_SOURCES = \
   models/check_state.c \
   models/definitions.c \
   models/equations.c \
+  models/ETMethods.c \
+  models/soil_temp.c \
   solvers/dopri5_dense.c \
   solvers/lagrange.c \
   solvers/radau.c \
@@ -65,6 +67,8 @@ libasynch_a_SOURCES = \
   models/check_state.h \
   models/definitions.h \
   models/equations.h \
+  models/ETMethods.h \
+  models/soil_temp.h \
   models/model.h \
   solvers/lagrange.h
 
