@@ -345,7 +345,7 @@ void InitRoutines(
 		link->differential = &model200;
 		link->algebraic = NULL;
 		link->check_state = NULL;
-		link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+		link->check_consistency = &CheckConsistency_Nonzero_runoff;
 	} 
 
 	else if (model_uid == 204) //tetis01
@@ -361,7 +361,7 @@ void InitRoutines(
 		link->differential = &model204;
 		link->algebraic = NULL;
 		link->check_state = NULL;
-		link->check_consistency = &CheckConsistency_Nonzero_AllStates_q;
+		link->check_consistency = &CheckConsistency_Nonzero_runoff;
 	} 
 
 	/******************************************************************************************************

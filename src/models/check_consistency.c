@@ -38,3 +38,16 @@ void CheckConsistency_Nonzero_AllStates_q(
         if (y[i] < 0.0)//causing issues !!!
             y[i] = 0.0;
 }
+
+void CheckConsistency_Nonzero_runoff(
+    double *y, unsigned int num_dof,
+    const double * const global_params, unsigned int num_global_params,
+    const double * const params, unsigned int num_params,
+    void *user)
+{
+    assert(y != NULL);
+    assert(num_dof >= 1);
+    for (unsigned int i = 1; i < num_dof; i++)
+        if (y[i] < 0.0)//causing issues !!!
+            y[i] = 0.0;
+}
