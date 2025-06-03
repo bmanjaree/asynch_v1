@@ -47,7 +47,7 @@ void CheckConsistency_Nonzero_runoff(
 {
     assert(y != NULL);
     assert(num_dof >= 1);
-    for (unsigned int i = 1; i < num_dof; i++)
+    for (unsigned int i = 0; i < 7; i++)
         if (y[i] < 0.0)//causing issues !!!
             y[i] = 0.0;
 }

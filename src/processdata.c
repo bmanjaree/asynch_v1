@@ -747,6 +747,13 @@ int DumpTimeSerieH5File(Link* sys, GlobalVars* globals, unsigned int N, unsigned
                 return 2;
             }
 
+            // Print debugging info
+            #ifdef DEBUG
+            if (1) {
+                printf("~~~~ Rank: %d, i: %d, d_iter: %d, save_list: %d\n", my_rank, i, current->disk_iterations, save_list[i]);
+            }
+            #endif
+
             //Read data in the temp file
             if (my_rank == 0)
             {
@@ -760,6 +767,18 @@ int DumpTimeSerieH5File(Link* sys, GlobalVars* globals, unsigned int N, unsigned
             }
             else
             {
+                #ifdef DEBUG
+                int tag_ub, flag;
+                MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &tag_ub, &flag);
+
+                if (flag && (save_list[i] < 0 || save_list[i] > tag_ub)) {
+                    fprintf(stderr, "[Rank %d] Invalid MPI tag %d (allowed range: 0 to %d)\n",
+                            my_rank, save_list[i], tag_ub);
+                    MPI_Abort(MPI_COMM_WORLD, 1);
+                }
+                #endif
+
+                // Bad line is bad
                 MPI_Ssend(&(current->disk_iterations), 1, MPI_UNSIGNED, 0, save_list[i], MPI_COMM_WORLD);
 
                 for (hsize_t k = 0; k < current->disk_iterations; k += chunk_size)
@@ -780,6 +799,7 @@ int DumpTimeSerieH5File(Link* sys, GlobalVars* globals, unsigned int N, unsigned
         else if (my_rank == 0)
         {
             //Write to file
+            printf("@@@@ Root Rank reciving proc: %d, d_iter: %d, save_list: %d\n", proc, current->disk_iterations, save_list[i]);
             MPI_Recv(&(current->disk_iterations), 1, MPI_UNSIGNED, proc, save_list[i], MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
             for (hsize_t k = 0; k < current->disk_iterations; k += chunk_size)

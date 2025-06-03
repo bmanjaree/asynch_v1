@@ -6,5 +6,5 @@ autoreconf --install
 mkdir build
 cd build
 make clean
-../configure CFLAGS="-g -O0 -Wno-format-security -DDEBUG" --without-postgresql
+../configure CFLAGS="-g -O0 -Wno-format-security" --without-postgresql
 make
