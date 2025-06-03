@@ -2877,6 +2877,7 @@ int CalculateInitialStepSizes(
 
     for (i = 0; i < my_N; i++)
     {
+
         my_sys[i]->h = InitialStepSize(globals->t_0, my_sys[i], globals, workspace);
         assert(my_sys[i]->h > 0.0);
     }
