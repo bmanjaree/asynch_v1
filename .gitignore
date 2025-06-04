@@ -113,3 +113,4 @@ src/.deps/system.Po
 src/assim/.deps/ancillary.Po
 src/assim/.deps/linear_least_squares.Po
 src/assim/.deps/models.Po
+compile.sh
