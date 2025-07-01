@@ -638,7 +638,7 @@ int DumpTimeSerieH5File(Link* sys, GlobalVars* globals, unsigned int N, unsigned
     hid_t packet_file_id;
     
     const hsize_t chunk_size = 512; // Chunk size, in number of table entries per chunk
-    const int compression = 5;      // Compression level, a value of 0 through 9.
+    const int compression = 0;      // Compression level, a value of 0 through 9.
 
     //Find total size of a line in the temp files
     unsigned int line_size = CalcTotalOutputSize(globals);
@@ -1074,7 +1074,7 @@ int DumpTimeSerieNcFile(Link* sys, GlobalVars* globals, unsigned int N, unsigned
     hsize_t count[3];  // Block count
 
     const hsize_t chunk_size = 512; // Chunk size in number of table entries per chunk
-    const int compression = 5;      // Compression level (0-9)
+    const int compression = 0;      // Compression level (0-9)
 
     // Determine the total size of one line in the temporary file
     unsigned int line_size = CalcTotalOutputSize(globals);
@@ -1323,7 +1323,7 @@ int DumpTimeSerieNcFile_old(Link* sys, GlobalVars* globals, unsigned int N, unsi
     hsize_t count[3];  // Block count
 
     const hsize_t chunk_size = 512; // Chunk size, in number of table entries per chunk
-    const int compression = 5;      // Compression level, a value of 0 through 9.
+    const int compression = 0;      // Compression level, a value of 0 through 9.
 
     //Find total size of a line in the temp files
     unsigned int line_size = CalcTotalOutputSize(globals);
@@ -2321,7 +2321,7 @@ int DumpStateH5(Link* sys, unsigned int N, int* assignments, GlobalVars* globals
     unsigned int res = 0;
 
     const hsize_t chunk_size = 512;   // Chunk size, in number of table entries per chunk
-    const int compression = 5;        // Compression level, a value of 0 through 9.
+    const int compression = 0;        // Compression level, a value of 0 through 9.
 
     if (my_rank == 0)
     {

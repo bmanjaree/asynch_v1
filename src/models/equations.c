@@ -475,7 +475,7 @@ void model204(double t, \
     ans[STATE_STATIC] = d1 - out1; //differential equation of static storage
 
     //surface storage tank -------------------------------------------------------------------------------
-    //infiltation
+    //infiltation zero if ground is frozen
     if(frozen_ground == 1){
         infiltration = 0;
     }
